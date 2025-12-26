@@ -1,16 +1,45 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
+import type { BubbleConfig } from '../../utils/compositor';
 
 interface CameraBubbleProps {
   stream: MediaStream | null;
+  onBubbleConfigChange?: (config: BubbleConfig) => void;
+  recordingWidth?: number;
+  recordingHeight?: number;
 }
 
-export const CameraBubble: React.FC<CameraBubbleProps> = ({ stream }) => {
+export const CameraBubble: React.FC<CameraBubbleProps> = ({
+  stream,
+  onBubbleConfigChange,
+  recordingWidth = 1920,
+  recordingHeight = 1080,
+}) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: window.innerWidth - 140, y: window.innerHeight - 140 });
   const [size, setSize] = useState(120);
   const [isDragging, setIsDragging] = useState(false);
   const dragOffset = useRef({ x: 0, y: 0 });
+
+  // Convert screen coordinates to recording canvas coordinates
+  const toRecordingCoords = useCallback((screenX: number, screenY: number, screenSize: number): BubbleConfig => {
+    const scaleX = recordingWidth / window.innerWidth;
+    const scaleY = recordingHeight / window.innerHeight;
+    const scale = Math.min(scaleX, scaleY);
+    return {
+      x: screenX * scaleX,
+      y: screenY * scaleY,
+      diameter: screenSize * scale,
+    };
+  }, [recordingWidth, recordingHeight]);
+
+  // Report position changes to parent
+  useEffect(() => {
+    if (onBubbleConfigChange) {
+      const config = toRecordingCoords(position.x, position.y, size);
+      onBubbleConfigChange(config);
+    }
+  }, [position, size, onBubbleConfigChange, toRecordingCoords]);
 
   useEffect(() => {
     if (videoRef.current && stream) {

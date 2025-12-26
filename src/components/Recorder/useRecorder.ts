@@ -1,37 +1,55 @@
 import { useState, useRef, useCallback } from 'react';
-import { Compositor } from '../../utils/compositor';
+import { Compositor, BubbleConfig } from '../../utils/compositor';
+import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
+
+export interface UseRecorderOptions {
+  getExcalidrawAPI: () => ExcalidrawImperativeAPI | null;
+}
 
 export interface UseRecorderReturn {
   isRecording: boolean;
   isPreviewing: boolean;
   cameraStream: MediaStream | null;
-  screenStream: MediaStream | null;
+  recordingStartTime: number | null;
   startPreview: () => Promise<void>;
   stopPreview: () => void;
   startRecording: () => Promise<void>;
   stopRecording: () => Promise<Blob>;
+  updateBubbleConfig: (config: BubbleConfig) => void;
 }
 
 const RECORDING_WIDTH = 1920;
 const RECORDING_HEIGHT = 1080;
-const BUBBLE_DIAMETER = 120;
-const BUBBLE_MARGIN = 20;
+const BUBBLE_DIAMETER = 180;
+const BUBBLE_MARGIN = 30;
 
-export function useRecorder(): UseRecorderReturn {
+export function useRecorder(options: UseRecorderOptions): UseRecorderReturn {
+  const { getExcalidrawAPI } = options;
+
   const [isRecording, setIsRecording] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [cameraStream, setCameraStream] = useState<MediaStream | null>(null);
-  const [screenStream, setScreenStream] = useState<MediaStream | null>(null);
+  const [recordingStartTime, setRecordingStartTime] = useState<number | null>(null);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const compositorRef = useRef<Compositor | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const cameraVideoRef = useRef<HTMLVideoElement | null>(null);
-  const screenVideoRef = useRef<HTMLVideoElement | null>(null);
+  const bubbleConfigRef = useRef<BubbleConfig>({
+    x: RECORDING_WIDTH - BUBBLE_DIAMETER - BUBBLE_MARGIN,
+    y: RECORDING_HEIGHT - BUBBLE_DIAMETER - BUBBLE_MARGIN,
+    diameter: BUBBLE_DIAMETER,
+  });
+
+  const updateBubbleConfig = useCallback((config: BubbleConfig) => {
+    bubbleConfigRef.current = config;
+    if (compositorRef.current) {
+      compositorRef.current.updateBubbleConfig(config);
+    }
+  }, []);
 
   const startPreview = useCallback(async () => {
     try {
-      // Get camera stream only for preview
       const camera = await navigator.mediaDevices.getUserMedia({
         video: { width: 640, height: 480, facingMode: 'user' },
         audio: true,
@@ -40,7 +58,6 @@ export function useRecorder(): UseRecorderReturn {
       setCameraStream(camera);
       setIsPreviewing(true);
 
-      // Create hidden video element for camera
       const cameraVideo = document.createElement('video');
       cameraVideo.srcObject = camera;
       cameraVideo.muted = true;
@@ -58,10 +75,6 @@ export function useRecorder(): UseRecorderReturn {
       cameraStream.getTracks().forEach((track) => track.stop());
       setCameraStream(null);
     }
-    if (screenStream) {
-      screenStream.getTracks().forEach((track) => track.stop());
-      setScreenStream(null);
-    }
     if (compositorRef.current) {
       compositorRef.current.stop();
       compositorRef.current = null;
@@ -70,54 +83,41 @@ export function useRecorder(): UseRecorderReturn {
       cameraVideoRef.current.srcObject = null;
       cameraVideoRef.current = null;
     }
-    if (screenVideoRef.current) {
-      screenVideoRef.current.srcObject = null;
-      screenVideoRef.current = null;
-    }
     setIsPreviewing(false);
     setIsRecording(false);
-  }, [cameraStream, screenStream]);
+    setRecordingStartTime(null);
+  }, [cameraStream]);
 
   const startRecording = useCallback(async () => {
     if (!cameraStream || !cameraVideoRef.current) {
       throw new Error('Preview not started');
     }
 
+    const excalidrawAPI = getExcalidrawAPI();
+    if (!excalidrawAPI) {
+      throw new Error('Excalidraw API not available');
+    }
+
     try {
-      // Get screen stream when recording starts
-      const screen = await navigator.mediaDevices.getDisplayMedia({
-        video: { width: RECORDING_WIDTH, height: RECORDING_HEIGHT },
-        audio: false,
-      });
-
-      setScreenStream(screen);
-
-      const screenVideo = document.createElement('video');
-      screenVideo.srcObject = screen;
-      screenVideo.muted = true;
-      screenVideo.playsInline = true;
-      await screenVideo.play();
-      screenVideoRef.current = screenVideo;
-
-      // Initialize compositor
+      // Initialize Compositor with Excalidraw source
       const compositor = new Compositor(RECORDING_WIDTH, RECORDING_HEIGHT);
-      compositor.setMainSource(screenVideo);
-      compositor.setCameraSource(cameraVideoRef.current, {
-        x: RECORDING_WIDTH - BUBBLE_DIAMETER - BUBBLE_MARGIN,
-        y: RECORDING_HEIGHT - BUBBLE_DIAMETER - BUBBLE_MARGIN,
-        diameter: BUBBLE_DIAMETER,
+      compositor.setExcalidrawSource(excalidrawAPI);
+      compositor.setCameraSource(cameraVideoRef.current, bubbleConfigRef.current);
+
+      // Enable recording timer
+      const startTime = Date.now();
+      compositor.setTimerConfig({
+        enabled: true,
+        startTime,
       });
+      setRecordingStartTime(startTime);
+
       compositor.start();
       compositorRef.current = compositor;
 
-      // Handle screen share stop
-      screen.getVideoTracks()[0].onended = () => {
-        stopRecording();
-      };
-
       chunksRef.current = [];
 
-      // Get composite stream and add audio from camera
+      // Get composite stream and add audio track
       const compositeStream = compositor.getStream();
       const audioTrack = cameraStream.getAudioTracks()[0];
       if (audioTrack) {
@@ -136,13 +136,13 @@ export function useRecorder(): UseRecorderReturn {
       };
 
       mediaRecorderRef.current = mediaRecorder;
-      mediaRecorder.start(1000); // Collect data every second
+      mediaRecorder.start(1000);
       setIsRecording(true);
     } catch (error) {
       console.error('Failed to start recording:', error);
       throw error;
     }
-  }, [cameraStream]);
+  }, [cameraStream, getExcalidrawAPI]);
 
   const stopRecording = useCallback(async (): Promise<Blob> => {
     return new Promise((resolve, reject) => {
@@ -156,6 +156,14 @@ export function useRecorder(): UseRecorderReturn {
         const blob = new Blob(chunksRef.current, { type: 'video/webm' });
         chunksRef.current = [];
         setIsRecording(false);
+        setRecordingStartTime(null);
+
+        // Stop compositor
+        if (compositorRef.current) {
+          compositorRef.current.stop();
+          compositorRef.current = null;
+        }
+
         resolve(blob);
       };
 
@@ -167,10 +175,11 @@ export function useRecorder(): UseRecorderReturn {
     isRecording,
     isPreviewing,
     cameraStream,
-    screenStream,
+    recordingStartTime,
     startPreview,
     stopPreview,
     startRecording,
     stopRecording,
+    updateBubbleConfig,
   };
 }

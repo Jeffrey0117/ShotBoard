@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 import { Whiteboard, WhiteboardAPI } from './components/Whiteboard';
 import { Toolbar } from './components/Toolbar';
 import { CameraBubble } from './components/Recorder/CameraBubble';
@@ -9,15 +9,23 @@ import './App.css';
 function App() {
   const whiteboardRef = useRef<WhiteboardAPI>(null);
   const isDirty = useProjectStore((state) => state.isDirty);
+
+  // Provide getExcalidrawAPI function to useRecorder
+  const getExcalidrawAPI = useCallback(() => {
+    return whiteboardRef.current?.getExcalidrawAPI() ?? null;
+  }, []);
+
   const {
     isRecording,
     isPreviewing,
     cameraStream,
+    recordingStartTime,
     startPreview,
     stopPreview,
     startRecording,
-    stopRecording
-  } = useRecorder();
+    stopRecording,
+    updateBubbleConfig,
+  } = useRecorder({ getExcalidrawAPI });
 
   // Listen for screenshot captures
   useEffect(() => {
@@ -55,6 +63,7 @@ function App() {
         <Toolbar
           isPreviewing={isPreviewing}
           isRecording={isRecording}
+          recordingStartTime={recordingStartTime}
           onStartPreview={startPreview}
           onStopPreview={stopPreview}
           onStartRecording={startRecording}
@@ -62,7 +71,10 @@ function App() {
         />
 
         {isPreviewing && cameraStream && (
-          <CameraBubble stream={cameraStream} />
+          <CameraBubble
+            stream={cameraStream}
+            onBubbleConfigChange={updateBubbleConfig}
+          />
         )}
       </main>
     </div>

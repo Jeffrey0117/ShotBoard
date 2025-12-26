@@ -6,6 +6,7 @@ import { useProjectStore } from '../../stores/projectStore';
 export interface WhiteboardAPI {
   insertImage: (dataUrl: string) => Promise<void>;
   getSceneData: () => any;
+  getExcalidrawAPI: () => ExcalidrawImperativeAPI | null;
 }
 
 interface WhiteboardProps {
@@ -84,7 +85,11 @@ export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
       };
     }, []);
 
-    useImperativeHandle(ref, () => ({ insertImage, getSceneData }), [insertImage, getSceneData]);
+    const getExcalidrawAPI = useCallback(() => {
+      return excalidrawAPIRef.current;
+    }, []);
+
+    useImperativeHandle(ref, () => ({ insertImage, getSceneData, getExcalidrawAPI }), [insertImage, getSceneData, getExcalidrawAPI]);
 
     const handleChange = useCallback((elements: any, appState: any) => {
       // Skip updates when editing text to prevent re-render issues

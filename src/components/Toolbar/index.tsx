@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 interface ToolbarProps {
   isPreviewing: boolean;
   isRecording: boolean;
+  recordingStartTime?: number | null;
   onStartPreview: () => void;
   onStopPreview: () => void;
   onStartRecording: () => void;
@@ -12,16 +13,40 @@ interface ToolbarProps {
 export const Toolbar: React.FC<ToolbarProps> = ({
   isPreviewing,
   isRecording,
+  recordingStartTime,
   onStartPreview,
   onStopPreview,
   onStartRecording,
   onStopRecording,
 }) => {
+  const [elapsed, setElapsed] = useState(0);
+
+  // Update timer display
+  useEffect(() => {
+    if (!isRecording || !recordingStartTime) {
+      setElapsed(0);
+      return;
+    }
+
+    const interval = setInterval(() => {
+      setElapsed(Date.now() - recordingStartTime);
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, [isRecording, recordingStartTime]);
+
+  const formatTime = (ms: number) => {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  };
+
   return (
     <div style={styles.container}>
       {!isPreviewing ? (
         <button style={styles.button} onClick={onStartPreview}>
-          Start Preview
+          📷 Start Preview
         </button>
       ) : (
         <>
@@ -30,7 +55,7 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               style={{ ...styles.button, ...styles.recordButton }}
               onClick={onStartRecording}
             >
-              Start Recording
+              🔴 Start Recording
             </button>
           ) : (
             <button
@@ -38,12 +63,17 @@ export const Toolbar: React.FC<ToolbarProps> = ({
               onClick={onStopRecording}
             >
               <span style={styles.recordingDot} />
-              Stop Recording
+              <span style={styles.timerText}>{formatTime(elapsed)}</span>
+              <span>Stop</span>
             </button>
           )}
           <button
-            style={{ ...styles.button, ...styles.cancelButton }}
-            onClick={onStopPreview}
+            style={{
+              ...styles.button,
+              ...styles.cancelButton,
+              ...(isRecording ? styles.disabled : {}),
+            }}
+            onClick={stopPreview}
             disabled={isRecording}
           >
             Cancel
@@ -52,6 +82,12 @@ export const Toolbar: React.FC<ToolbarProps> = ({
       )}
     </div>
   );
+
+  function stopPreview() {
+    if (!isRecording) {
+      onStopPreview();
+    }
+  }
 };
 
 const styles: Record<string, React.CSSProperties> = {
@@ -63,10 +99,10 @@ const styles: Record<string, React.CSSProperties> = {
     display: 'flex',
     gap: 12,
     padding: '12px 20px',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    backgroundColor: 'rgba(0, 0, 0, 0.85)',
     borderRadius: 12,
     boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-    zIndex: 1001,
+    zIndex: 10000,
   },
   button: {
     display: 'flex',
@@ -87,9 +123,14 @@ const styles: Record<string, React.CSSProperties> = {
   },
   stopButton: {
     backgroundColor: '#e53935',
+    minWidth: 160,
   },
   cancelButton: {
     backgroundColor: '#666',
+  },
+  disabled: {
+    opacity: 0.5,
+    cursor: 'not-allowed',
   },
   recordingDot: {
     width: 10,
@@ -98,16 +139,25 @@ const styles: Record<string, React.CSSProperties> = {
     borderRadius: '50%',
     animation: 'pulse 1s ease-in-out infinite',
   },
+  timerText: {
+    fontFamily: 'monospace',
+    fontWeight: 'bold',
+    minWidth: 50,
+  },
 };
 
 // Add keyframes for pulse animation
 if (typeof document !== 'undefined') {
-  const styleSheet = document.createElement('style');
-  styleSheet.textContent = `
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-  `;
-  document.head.appendChild(styleSheet);
+  const existingStyle = document.getElementById('toolbar-keyframes');
+  if (!existingStyle) {
+    const styleSheet = document.createElement('style');
+    styleSheet.id = 'toolbar-keyframes';
+    styleSheet.textContent = `
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+      }
+    `;
+    document.head.appendChild(styleSheet);
+  }
 }
