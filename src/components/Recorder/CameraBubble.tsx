@@ -1,17 +1,16 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 
 interface CameraBubbleProps {
   stream: MediaStream | null;
-  size?: number;
-  position?: { bottom: number; right: number };
 }
 
-export const CameraBubble: React.FC<CameraBubbleProps> = ({
-  stream,
-  size = 120,
-  position = { bottom: 20, right: 20 },
-}) => {
+export const CameraBubble: React.FC<CameraBubbleProps> = ({ stream }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [position, setPosition] = useState({ x: window.innerWidth - 140, y: window.innerHeight - 140 });
+  const [size, setSize] = useState(120);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragOffset = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     if (videoRef.current && stream) {
@@ -19,21 +18,65 @@ export const CameraBubble: React.FC<CameraBubbleProps> = ({
     }
   }, [stream]);
 
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDragging(true);
+    dragOffset.current = {
+      x: e.clientX - position.x,
+      y: e.clientY - position.y,
+    };
+  }, [position]);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging) return;
+    setPosition({
+      x: Math.max(0, Math.min(window.innerWidth - size, e.clientX - dragOffset.current.x)),
+      y: Math.max(0, Math.min(window.innerHeight - size, e.clientY - dragOffset.current.y)),
+    });
+  }, [isDragging, size]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  const handleWheel = useCallback((e: React.WheelEvent) => {
+    e.preventDefault();
+    const delta = e.deltaY > 0 ? -10 : 10;
+    setSize((prev) => Math.max(80, Math.min(300, prev + delta)));
+  }, []);
+
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
   if (!stream) return null;
 
   return (
     <div
+      ref={containerRef}
+      onMouseDown={handleMouseDown}
+      onWheel={handleWheel}
       style={{
         position: 'fixed',
-        bottom: position.bottom,
-        right: position.right,
+        left: position.x,
+        top: position.y,
         width: size,
         height: size,
         borderRadius: '50%',
         overflow: 'hidden',
         border: '3px solid #fff',
         boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)',
-        zIndex: 1000,
+        zIndex: 99999,
+        cursor: isDragging ? 'grabbing' : 'grab',
+        backgroundColor: '#000',
+        userSelect: 'none',
       }}
     >
       <video
@@ -45,7 +88,8 @@ export const CameraBubble: React.FC<CameraBubbleProps> = ({
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          transform: 'scaleX(-1)', // Mirror effect
+          transform: 'scaleX(-1)',
+          pointerEvents: 'none',
         }}
       />
     </div>

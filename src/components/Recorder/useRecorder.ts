@@ -31,52 +31,22 @@ export function useRecorder(): UseRecorderReturn {
 
   const startPreview = useCallback(async () => {
     try {
-      // Get camera stream
+      // Get camera stream only for preview
       const camera = await navigator.mediaDevices.getUserMedia({
         video: { width: 640, height: 480, facingMode: 'user' },
         audio: true,
       });
 
-      // Get screen stream
-      const screen = await navigator.mediaDevices.getDisplayMedia({
-        video: { width: RECORDING_WIDTH, height: RECORDING_HEIGHT },
-        audio: false,
-      });
-
       setCameraStream(camera);
-      setScreenStream(screen);
       setIsPreviewing(true);
 
-      // Create hidden video elements for compositor
+      // Create hidden video element for camera
       const cameraVideo = document.createElement('video');
       cameraVideo.srcObject = camera;
       cameraVideo.muted = true;
       cameraVideo.playsInline = true;
       await cameraVideo.play();
       cameraVideoRef.current = cameraVideo;
-
-      const screenVideo = document.createElement('video');
-      screenVideo.srcObject = screen;
-      screenVideo.muted = true;
-      screenVideo.playsInline = true;
-      await screenVideo.play();
-      screenVideoRef.current = screenVideo;
-
-      // Initialize compositor
-      const compositor = new Compositor(RECORDING_WIDTH, RECORDING_HEIGHT);
-      compositor.setMainSource(screenVideo);
-      compositor.setCameraSource(cameraVideo, {
-        x: RECORDING_WIDTH - BUBBLE_DIAMETER - BUBBLE_MARGIN,
-        y: RECORDING_HEIGHT - BUBBLE_DIAMETER - BUBBLE_MARGIN,
-        diameter: BUBBLE_DIAMETER,
-      });
-      compositor.start();
-      compositorRef.current = compositor;
-
-      // Handle screen share stop
-      screen.getVideoTracks()[0].onended = () => {
-        stopPreview();
-      };
     } catch (error) {
       console.error('Failed to start preview:', error);
       throw error;
@@ -109,33 +79,69 @@ export function useRecorder(): UseRecorderReturn {
   }, [cameraStream, screenStream]);
 
   const startRecording = useCallback(async () => {
-    if (!compositorRef.current || !cameraStream) {
+    if (!cameraStream || !cameraVideoRef.current) {
       throw new Error('Preview not started');
     }
 
-    chunksRef.current = [];
+    try {
+      // Get screen stream when recording starts
+      const screen = await navigator.mediaDevices.getDisplayMedia({
+        video: { width: RECORDING_WIDTH, height: RECORDING_HEIGHT },
+        audio: false,
+      });
 
-    // Get composite stream and add audio from camera
-    const compositeStream = compositorRef.current.getStream();
-    const audioTrack = cameraStream.getAudioTracks()[0];
-    if (audioTrack) {
-      compositeStream.addTrack(audioTrack);
-    }
+      setScreenStream(screen);
 
-    const mediaRecorder = new MediaRecorder(compositeStream, {
-      mimeType: 'video/webm;codecs=vp9',
-      videoBitsPerSecond: 2500000,
-    });
+      const screenVideo = document.createElement('video');
+      screenVideo.srcObject = screen;
+      screenVideo.muted = true;
+      screenVideo.playsInline = true;
+      await screenVideo.play();
+      screenVideoRef.current = screenVideo;
 
-    mediaRecorder.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        chunksRef.current.push(event.data);
+      // Initialize compositor
+      const compositor = new Compositor(RECORDING_WIDTH, RECORDING_HEIGHT);
+      compositor.setMainSource(screenVideo);
+      compositor.setCameraSource(cameraVideoRef.current, {
+        x: RECORDING_WIDTH - BUBBLE_DIAMETER - BUBBLE_MARGIN,
+        y: RECORDING_HEIGHT - BUBBLE_DIAMETER - BUBBLE_MARGIN,
+        diameter: BUBBLE_DIAMETER,
+      });
+      compositor.start();
+      compositorRef.current = compositor;
+
+      // Handle screen share stop
+      screen.getVideoTracks()[0].onended = () => {
+        stopRecording();
+      };
+
+      chunksRef.current = [];
+
+      // Get composite stream and add audio from camera
+      const compositeStream = compositor.getStream();
+      const audioTrack = cameraStream.getAudioTracks()[0];
+      if (audioTrack) {
+        compositeStream.addTrack(audioTrack);
       }
-    };
 
-    mediaRecorderRef.current = mediaRecorder;
-    mediaRecorder.start(1000); // Collect data every second
-    setIsRecording(true);
+      const mediaRecorder = new MediaRecorder(compositeStream, {
+        mimeType: 'video/webm;codecs=vp9',
+        videoBitsPerSecond: 2500000,
+      });
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          chunksRef.current.push(event.data);
+        }
+      };
+
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start(1000); // Collect data every second
+      setIsRecording(true);
+    } catch (error) {
+      console.error('Failed to start recording:', error);
+      throw error;
+    }
   }, [cameraStream]);
 
   const stopRecording = useCallback(async (): Promise<Blob> => {

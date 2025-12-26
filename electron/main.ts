@@ -1,4 +1,4 @@
-import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron'
+import { app, BrowserWindow, globalShortcut, ipcMain, desktopCapturer, session } from 'electron'
 import path from 'path'
 import { registerScreenshotHandlers, captureScreen, captureRegion } from './screenshot'
 
@@ -54,6 +54,17 @@ app.whenReady().then(() => {
   createWindow()
   registerShortcuts()
   registerScreenshotHandlers()
+
+  // Handle getDisplayMedia for screen recording
+  session.defaultSession.setDisplayMediaRequestHandler(async (_request, callback) => {
+    const sources = await desktopCapturer.getSources({ types: ['screen', 'window'] })
+    // Use the first screen source (primary display)
+    if (sources.length > 0) {
+      callback({ video: sources[0] })
+    } else {
+      callback({})
+    }
+  })
 })
 
 app.on('window-all-closed', () => {
