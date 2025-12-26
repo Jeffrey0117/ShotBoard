@@ -10,9 +10,9 @@ function App() {
   const whiteboardRef = useRef<WhiteboardAPI>(null);
   const isDirty = useProjectStore((state) => state.isDirty);
 
-  // Provide getExcalidrawAPI function to useRecorder
-  const getExcalidrawAPI = useCallback(() => {
-    return whiteboardRef.current?.getExcalidrawAPI() ?? null;
+  // Provide getCanvas function to useRecorder
+  const getCanvas = useCallback(() => {
+    return whiteboardRef.current?.getCanvas() ?? null;
   }, []);
 
   const {
@@ -25,7 +25,7 @@ function App() {
     startRecording,
     stopRecording,
     updateBubbleConfig,
-  } = useRecorder({ getExcalidrawAPI });
+  } = useRecorder({ getCanvas });
 
   // Listen for screenshot captures
   useEffect(() => {

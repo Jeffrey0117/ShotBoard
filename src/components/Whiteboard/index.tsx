@@ -7,6 +7,7 @@ export interface WhiteboardAPI {
   insertImage: (dataUrl: string) => Promise<void>;
   getSceneData: () => any;
   getExcalidrawAPI: () => ExcalidrawImperativeAPI | null;
+  getCanvas: () => HTMLCanvasElement | null;
 }
 
 interface WhiteboardProps {
@@ -16,6 +17,7 @@ interface WhiteboardProps {
 export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
   function Whiteboard({ className }, ref) {
     const excalidrawAPIRef = useRef<ExcalidrawImperativeAPI | null>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
     const setDirty = useProjectStore((state) => state.setDirty);
     const updateCanvas = useProjectStore((state) => state.updateCanvas);
     const insertImageToStore = useProjectStore((state) => state.insertImage);
@@ -89,7 +91,14 @@ export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
       return excalidrawAPIRef.current;
     }, []);
 
-    useImperativeHandle(ref, () => ({ insertImage, getSceneData, getExcalidrawAPI }), [insertImage, getSceneData, getExcalidrawAPI]);
+    const getCanvas = useCallback(() => {
+      // Get the actual canvas element from Excalidraw's DOM
+      if (!containerRef.current) return null;
+      const canvas = containerRef.current.querySelector('.excalidraw__canvas') as HTMLCanvasElement;
+      return canvas || containerRef.current.querySelector('canvas') as HTMLCanvasElement;
+    }, []);
+
+    useImperativeHandle(ref, () => ({ insertImage, getSceneData, getExcalidrawAPI, getCanvas }), [insertImage, getSceneData, getExcalidrawAPI, getCanvas]);
 
     const handleChange = useCallback((elements: any, appState: any) => {
       // Skip updates when editing text to prevent re-render issues
@@ -105,7 +114,7 @@ export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
     }, [setDirty, updateCanvas]);
 
     return (
-      <div className={className} style={{ width: '100%', height: '100%', position: 'relative' }}>
+      <div ref={containerRef} className={className} style={{ width: '100%', height: '100%', position: 'relative' }}>
         <Excalidraw
           excalidrawAPI={(api) => { excalidrawAPIRef.current = api; }}
           onChange={handleChange}

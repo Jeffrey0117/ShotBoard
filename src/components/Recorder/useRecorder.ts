@@ -1,9 +1,8 @@
 import { useState, useRef, useCallback } from 'react';
 import { Compositor, BubbleConfig } from '../../utils/compositor';
-import type { ExcalidrawImperativeAPI } from '@excalidraw/excalidraw/types/types';
 
 export interface UseRecorderOptions {
-  getExcalidrawAPI: () => ExcalidrawImperativeAPI | null;
+  getCanvas: () => HTMLCanvasElement | null;
 }
 
 export interface UseRecorderReturn {
@@ -24,7 +23,7 @@ const BUBBLE_DIAMETER = 180;
 const BUBBLE_MARGIN = 30;
 
 export function useRecorder(options: UseRecorderOptions): UseRecorderReturn {
-  const { getExcalidrawAPI } = options;
+  const { getCanvas } = options;
 
   const [isRecording, setIsRecording] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
@@ -93,15 +92,16 @@ export function useRecorder(options: UseRecorderOptions): UseRecorderReturn {
       throw new Error('Preview not started');
     }
 
-    const excalidrawAPI = getExcalidrawAPI();
-    if (!excalidrawAPI) {
-      throw new Error('Excalidraw API not available');
+    // Verify we can get the canvas
+    const testCanvas = getCanvas();
+    if (!testCanvas) {
+      throw new Error('Canvas not available');
     }
 
     try {
-      // Initialize Compositor with Excalidraw source
+      // Initialize Compositor with canvas getter
       const compositor = new Compositor(RECORDING_WIDTH, RECORDING_HEIGHT);
-      compositor.setExcalidrawSource(excalidrawAPI);
+      compositor.setSourceCanvasGetter(getCanvas);
       compositor.setCameraSource(cameraVideoRef.current, bubbleConfigRef.current);
 
       // Enable recording timer
@@ -142,7 +142,7 @@ export function useRecorder(options: UseRecorderOptions): UseRecorderReturn {
       console.error('Failed to start recording:', error);
       throw error;
     }
-  }, [cameraStream, getExcalidrawAPI]);
+  }, [cameraStream, getCanvas]);
 
   const stopRecording = useCallback(async (): Promise<Blob> => {
     return new Promise((resolve, reject) => {
