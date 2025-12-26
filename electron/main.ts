@@ -2,6 +2,9 @@ import { app, BrowserWindow, globalShortcut, ipcMain } from 'electron'
 import path from 'path'
 import { registerScreenshotHandlers, captureScreen, captureRegion } from './screenshot'
 
+// VITE_DEV_SERVER_URL is set by vite-plugin-electron
+const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
+
 let mainWindow: BrowserWindow | null = null
 
 function createWindow() {
@@ -17,8 +20,8 @@ function createWindow() {
     backgroundColor: '#0f0f23'
   })
 
-  if (process.env.NODE_ENV === 'development') {
-    mainWindow.loadURL('http://localhost:5173')
+  if (VITE_DEV_SERVER_URL) {
+    mainWindow.loadURL(VITE_DEV_SERVER_URL)
     mainWindow.webContents.openDevTools()
   } else {
     mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
