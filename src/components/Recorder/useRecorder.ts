@@ -3,6 +3,7 @@ import { Compositor, BubbleConfig } from '../../utils/compositor';
 
 export interface UseRecorderOptions {
   getCanvas: () => HTMLCanvasElement | null;
+  getBackgroundColor: () => string;
 }
 
 export interface UseRecorderReturn {
@@ -23,7 +24,7 @@ const BUBBLE_DIAMETER = 180;
 const BUBBLE_MARGIN = 30;
 
 export function useRecorder(options: UseRecorderOptions): UseRecorderReturn {
-  const { getCanvas } = options;
+  const { getCanvas, getBackgroundColor } = options;
 
   const [isRecording, setIsRecording] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
@@ -99,9 +100,10 @@ export function useRecorder(options: UseRecorderOptions): UseRecorderReturn {
     }
 
     try {
-      // Initialize Compositor with canvas getter
+      // Initialize Compositor with canvas getter and background color getter
       const compositor = new Compositor(RECORDING_WIDTH, RECORDING_HEIGHT);
       compositor.setSourceCanvasGetter(getCanvas);
+      compositor.setBackgroundColorGetter(getBackgroundColor);
       compositor.setCameraSource(cameraVideoRef.current, bubbleConfigRef.current);
 
       // Enable recording timer

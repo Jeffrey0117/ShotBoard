@@ -10,9 +10,13 @@ function App() {
   const whiteboardRef = useRef<WhiteboardAPI>(null);
   const isDirty = useProjectStore((state) => state.isDirty);
 
-  // Provide getCanvas function to useRecorder
+  // Provide getCanvas and getBackgroundColor functions to useRecorder
   const getCanvas = useCallback(() => {
     return whiteboardRef.current?.getCanvas() ?? null;
+  }, []);
+
+  const getBackgroundColor = useCallback(() => {
+    return whiteboardRef.current?.getBackgroundColor() ?? '#1a1a2e';
   }, []);
 
   const {
@@ -25,7 +29,7 @@ function App() {
     startRecording,
     stopRecording,
     updateBubbleConfig,
-  } = useRecorder({ getCanvas });
+  } = useRecorder({ getCanvas, getBackgroundColor });
 
   // Listen for screenshot captures
   useEffect(() => {

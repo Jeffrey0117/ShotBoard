@@ -8,6 +8,7 @@ export interface WhiteboardAPI {
   getSceneData: () => any;
   getExcalidrawAPI: () => ExcalidrawImperativeAPI | null;
   getCanvas: () => HTMLCanvasElement | null;
+  getBackgroundColor: () => string;
 }
 
 interface WhiteboardProps {
@@ -98,7 +99,14 @@ export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
       return canvas || containerRef.current.querySelector('canvas') as HTMLCanvasElement;
     }, []);
 
-    useImperativeHandle(ref, () => ({ insertImage, getSceneData, getExcalidrawAPI, getCanvas }), [insertImage, getSceneData, getExcalidrawAPI, getCanvas]);
+    const getBackgroundColor = useCallback(() => {
+      const api = excalidrawAPIRef.current;
+      if (!api) return '#1a1a2e';
+      const appState = api.getAppState();
+      return appState.viewBackgroundColor || '#1a1a2e';
+    }, []);
+
+    useImperativeHandle(ref, () => ({ insertImage, getSceneData, getExcalidrawAPI, getCanvas, getBackgroundColor }), [insertImage, getSceneData, getExcalidrawAPI, getCanvas, getBackgroundColor]);
 
     const handleChange = useCallback((elements: any, appState: any) => {
       // Skip updates when editing text to prevent re-render issues
