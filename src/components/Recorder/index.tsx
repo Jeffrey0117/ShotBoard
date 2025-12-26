@@ -1,18 +1,28 @@
 import React, { useCallback } from 'react';
-import { useRecorder } from './useRecorder';
+import { useRecorder, UseRecorderOptions } from './useRecorder';
 import { CameraBubble } from './CameraBubble';
 import { Toolbar } from '../Toolbar';
 
-export const Recorder: React.FC = () => {
+interface RecorderProps {
+  getCanvas: () => HTMLCanvasElement | null;
+  getBackgroundColor: () => string;
+}
+
+export const Recorder: React.FC<RecorderProps> = ({ getCanvas, getBackgroundColor }) => {
+  const options: UseRecorderOptions = { getCanvas, getBackgroundColor };
+
   const {
     isRecording,
     isPreviewing,
     cameraStream,
+    cameraSettings,
     startPreview,
     stopPreview,
     startRecording,
     stopRecording,
-  } = useRecorder();
+    updateBubbleConfig,
+    setCameraSettings,
+  } = useRecorder(options);
 
   const handleStartPreview = useCallback(async () => {
     try {
@@ -51,7 +61,12 @@ export const Recorder: React.FC = () => {
 
   return (
     <>
-      <CameraBubble stream={cameraStream} />
+      <CameraBubble
+        stream={cameraStream}
+        onBubbleConfigChange={updateBubbleConfig}
+        settings={cameraSettings}
+        onSettingsChange={setCameraSettings}
+      />
       <Toolbar
         isPreviewing={isPreviewing}
         isRecording={isRecording}
@@ -66,3 +81,4 @@ export const Recorder: React.FC = () => {
 
 export { CameraBubble } from './CameraBubble';
 export { useRecorder } from './useRecorder';
+export type { CameraSettings } from './CameraBubble';

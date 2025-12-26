@@ -24,11 +24,13 @@ function App() {
     isPreviewing,
     cameraStream,
     recordingStartTime,
+    cameraSettings,
     startPreview,
     stopPreview,
     startRecording,
     stopRecording,
     updateBubbleConfig,
+    setCameraSettings,
   } = useRecorder({ getCanvas, getBackgroundColor });
 
   // Listen for screenshot captures
@@ -78,6 +80,8 @@ function App() {
           <CameraBubble
             stream={cameraStream}
             onBubbleConfigChange={updateBubbleConfig}
+            settings={cameraSettings}
+            onSettingsChange={setCameraSettings}
           />
         )}
       </main>

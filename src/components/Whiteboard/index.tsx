@@ -108,7 +108,7 @@ export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
 
     useImperativeHandle(ref, () => ({ insertImage, getSceneData, getExcalidrawAPI, getCanvas, getBackgroundColor }), [insertImage, getSceneData, getExcalidrawAPI, getCanvas, getBackgroundColor]);
 
-    const handleChange = useCallback((elements: any, appState: any) => {
+    const handleChange = useCallback((_elements: any, appState: any) => {
       // Skip updates when editing text to prevent re-render issues
       if (appState.editingElement?.type === 'text') {
         return;

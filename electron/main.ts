@@ -44,6 +44,11 @@ function createWindow() {
 }
 
 function registerShortcuts() {
+  // F12: Toggle DevTools
+  globalShortcut.register('F12', () => {
+    mainWindow?.webContents.toggleDevTools()
+  })
+
   // Ctrl+Shift+2: 框選截圖
   globalShortcut.register('CommandOrControl+Shift+2', async () => {
     const screenshot = await captureRegion()

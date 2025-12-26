@@ -1,7 +1,12 @@
+export type CameraShape = 'circle' | 'square' | 'rounded';
+
 export interface BubbleConfig {
   x: number;
   y: number;
   diameter: number;
+  shape: CameraShape;
+  visible: boolean;
+  borderRadius: number;
 }
 
 export interface TimerConfig {
@@ -14,12 +19,15 @@ export class Compositor {
   private ctx: CanvasRenderingContext2D;
   private animationId: number | null = null;
 
-  private sourceCanvas: HTMLCanvasElement | null = null;
   private getSourceCanvas: (() => HTMLCanvasElement | null) | null = null;
   private getBackgroundColor: (() => string) | null = null;
   private cameraVideo: HTMLVideoElement | null = null;
   private bubbleConfig: BubbleConfig | null = null;
   private timerConfig: TimerConfig | null = null;
+
+  // Intermediate canvas for color space conversion
+  private intermediateCanvas: HTMLCanvasElement | null = null;
+  private intermediateCtx: CanvasRenderingContext2D | null = null;
 
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 30; // 30fps
@@ -28,6 +36,7 @@ export class Compositor {
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
     this.canvas.height = height;
+    // Use default context settings - custom colorSpace/alpha may cause issues
     const ctx = this.canvas.getContext('2d');
     if (!ctx) throw new Error('Failed to get 2d context');
     this.ctx = ctx;
@@ -54,6 +63,43 @@ export class Compositor {
 
   setTimerConfig(config: TimerConfig): void {
     this.timerConfig = config;
+  }
+
+  private createClipPath(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    size: number,
+    shape: CameraShape,
+    borderRadius: number = 16
+  ): void {
+    ctx.beginPath();
+
+    switch (shape) {
+      case 'circle': {
+        const radius = size / 2;
+        ctx.arc(x + radius, y + radius, radius, 0, Math.PI * 2);
+        break;
+      }
+      case 'square':
+        ctx.rect(x, y, size, size);
+        break;
+      case 'rounded': {
+        const r = Math.min(borderRadius, size / 2);
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + size - r, y);
+        ctx.quadraticCurveTo(x + size, y, x + size, y + r);
+        ctx.lineTo(x + size, y + size - r);
+        ctx.quadraticCurveTo(x + size, y + size, x + size - r, y + size);
+        ctx.lineTo(x + r, y + size);
+        ctx.quadraticCurveTo(x, y + size, x, y + size - r);
+        ctx.lineTo(x, y + r);
+        ctx.quadraticCurveTo(x, y, x + r, y);
+        break;
+      }
+    }
+
+    ctx.closePath();
   }
 
   private drawTimer(): void {
@@ -115,22 +161,45 @@ export class Compositor {
     // Get source canvas from getter function
     const sourceCanvas = this.getSourceCanvas?.();
 
-    // Draw source canvas (Excalidraw) on top of background
+    // Draw source canvas (Excalidraw) with CSS filter compensation
+    // Excalidraw uses "filter: invert(0.93) hue-rotate(180deg)" for dark mode
+    // We need to apply this same filter to match what user sees on screen
     if (sourceCanvas && sourceCanvas.width > 0 && sourceCanvas.height > 0) {
-      ctx.drawImage(sourceCanvas, 0, 0, canvas.width, canvas.height);
+      // Create intermediate canvas with CSS filter applied
+      if (!this.intermediateCanvas ||
+          this.intermediateCanvas.width !== sourceCanvas.width ||
+          this.intermediateCanvas.height !== sourceCanvas.height) {
+        this.intermediateCanvas = document.createElement('canvas');
+        this.intermediateCanvas.width = sourceCanvas.width;
+        this.intermediateCanvas.height = sourceCanvas.height;
+        this.intermediateCtx = this.intermediateCanvas.getContext('2d');
+      }
+
+      if (this.intermediateCtx) {
+        // Apply the same CSS filter that Excalidraw uses for dark mode
+        this.intermediateCtx.filter = 'invert(0.93) hue-rotate(180deg)';
+        this.intermediateCtx.drawImage(sourceCanvas, 0, 0);
+        this.intermediateCtx.filter = 'none'; // Reset filter
+
+        // Draw filtered result to main canvas
+        ctx.drawImage(this.intermediateCanvas, 0, 0, canvas.width, canvas.height);
+      } else {
+        // Fallback: direct draw without filter
+        ctx.drawImage(sourceCanvas, 0, 0, canvas.width, canvas.height);
+      }
     }
 
-    // Draw camera bubble
-    if (this.cameraVideo && this.bubbleConfig && this.cameraVideo.readyState >= 2) {
-      const { x, y, diameter } = this.bubbleConfig;
+    // Draw camera bubble (only if visible)
+    if (this.cameraVideo && this.bubbleConfig && this.bubbleConfig.visible && this.cameraVideo.readyState >= 2) {
+      const { x, y, diameter, shape, borderRadius } = this.bubbleConfig;
       const radius = diameter / 2;
       const centerX = x + radius;
       const centerY = y + radius;
 
       ctx.save();
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-      ctx.closePath();
+
+      // Create clip path based on shape
+      this.createClipPath(ctx, x, y, diameter, shape, borderRadius);
       ctx.clip();
 
       // Draw camera video with aspect ratio correction
@@ -152,8 +221,7 @@ export class Compositor {
       ctx.restore();
 
       // Draw border
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+      this.createClipPath(ctx, x, y, diameter, shape, borderRadius);
       ctx.strokeStyle = '#ffffff';
       ctx.lineWidth = 3;
       ctx.stroke();
