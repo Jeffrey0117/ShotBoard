@@ -5,6 +5,9 @@ import renderer from 'vite-plugin-electron-renderer'
 import { resolve } from 'path'
 
 export default defineConfig({
+  define: {
+    'process.env': {}
+  },
   plugins: [
     react(),
     electron([
