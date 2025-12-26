@@ -122,6 +122,11 @@ export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
             appState: {
               viewBackgroundColor: '#1a1a2e',
               gridSize: null,
+              currentItemStrokeColor: '#ffffff',
+              currentItemBackgroundColor: '#3d5a80',
+              currentItemFillStyle: 'solid',
+              currentItemFontFamily: 1,
+              currentItemFontSize: 20,
             },
           }}
           UIOptions={{

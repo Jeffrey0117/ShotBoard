@@ -101,17 +101,18 @@ export class Compositor {
 
     const { ctx, canvas } = this;
 
-    // Clear and draw background
-    ctx.fillStyle = '#1a1a2e';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     // Get source canvas from getter function
     const sourceCanvas = this.getSourceCanvas?.();
 
     // Draw source canvas (Excalidraw) - scale to fit recording dimensions
     if (sourceCanvas && sourceCanvas.width > 0 && sourceCanvas.height > 0) {
-      // Draw the source canvas scaled to fill the recording canvas
+      // Clear first, then draw source canvas which includes its own background
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(sourceCanvas, 0, 0, canvas.width, canvas.height);
+    } else {
+      // Fallback background if no source canvas
+      ctx.fillStyle = '#1a1a2e';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
     // Draw camera bubble

@@ -2,6 +2,10 @@ import { app, BrowserWindow, globalShortcut, ipcMain, desktopCapturer, session }
 import path from 'path'
 import { registerScreenshotHandlers, captureScreen, captureRegion } from './screenshot'
 
+// Performance optimizations
+app.commandLine.appendSwitch('disable-renderer-backgrounding')
+app.commandLine.appendSwitch('disable-background-timer-throttling')
+
 // VITE_DEV_SERVER_URL is set by vite-plugin-electron
 const VITE_DEV_SERVER_URL = process.env['VITE_DEV_SERVER_URL']
 
@@ -11,13 +15,20 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1280,
     height: 800,
+    show: false, // Don't show until ready
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      backgroundThrottling: false, // Keep running at full speed when recording
     },
     title: 'ShotBoard',
-    backgroundColor: '#0f0f23'
+    backgroundColor: '#1a1a2e'
+  })
+
+  // Show window when ready to prevent white flash
+  mainWindow.once('ready-to-show', () => {
+    mainWindow?.show()
   })
 
   if (VITE_DEV_SERVER_URL) {
