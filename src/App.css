@@ -54,6 +54,14 @@ html, body, #root {
   gap: 12px;
 }
 
+.page-indicator {
+  font-size: 13px;
+  color: #888;
+  padding: 4px 8px;
+  background: #252535;
+  border-radius: 4px;
+}
+
 .dirty-indicator {
   width: 8px;
   height: 8px;
@@ -69,6 +77,14 @@ html, body, #root {
   flex: 1;
   position: relative;
   overflow: visible;
+  display: flex;
+  flex-direction: row;
+}
+
+.whiteboard-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
 }
 
 .whiteboard-container {

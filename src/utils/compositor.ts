@@ -32,6 +32,9 @@ export class Compositor {
   private lastFrameTime: number = 0;
   private frameInterval: number = 1000 / 30; // 30fps
 
+  // Zoom getter for proportional scaling
+  private getZoom: (() => number) | null = null;
+
   constructor(width: number, height: number) {
     this.canvas = document.createElement('canvas');
     this.canvas.width = width;
@@ -63,6 +66,47 @@ export class Compositor {
 
   setTimerConfig(config: TimerConfig): void {
     this.timerConfig = config;
+  }
+
+  setZoomGetter(getter: () => number): void {
+    this.getZoom = getter;
+  }
+
+  // 計算等比例縮放參數（Letterbox/Pillarbox）
+  private calculateFitDimensions(
+    sourceWidth: number,
+    sourceHeight: number,
+    targetWidth: number,
+    targetHeight: number
+  ): { drawWidth: number; drawHeight: number; offsetX: number; offsetY: number } {
+    const sourceAspect = sourceWidth / sourceHeight;
+    const targetAspect = targetWidth / targetHeight;
+
+    let drawWidth: number;
+    let drawHeight: number;
+    let offsetX: number;
+    let offsetY: number;
+
+    if (sourceAspect > targetAspect) {
+      // 來源較寬，以寬度為基準，上下留黑邊
+      drawWidth = targetWidth;
+      drawHeight = targetWidth / sourceAspect;
+      offsetX = 0;
+      offsetY = (targetHeight - drawHeight) / 2;
+    } else {
+      // 來源較高，以高度為基準，左右留黑邊
+      drawHeight = targetHeight;
+      drawWidth = targetHeight * sourceAspect;
+      offsetX = (targetWidth - drawWidth) / 2;
+      offsetY = 0;
+    }
+
+    return {
+      drawWidth: Math.round(drawWidth),
+      drawHeight: Math.round(drawHeight),
+      offsetX: Math.round(offsetX),
+      offsetY: Math.round(offsetY),
+    };
   }
 
   private createClipPath(
@@ -161,10 +205,22 @@ export class Compositor {
     // Get source canvas from getter function
     const sourceCanvas = this.getSourceCanvas?.();
 
-    // Draw source canvas (Excalidraw) with CSS filter compensation
+    // Draw source canvas (Excalidraw) with CSS filter compensation and proportional scaling
     // Excalidraw uses "filter: invert(0.93) hue-rotate(180deg)" for dark mode
-    // We need to apply this same filter to match what user sees on screen
     if (sourceCanvas && sourceCanvas.width > 0 && sourceCanvas.height > 0) {
+      // Get zoom value and calculate logical dimensions (zoom compensation)
+      const zoom = this.getZoom?.() || 1;
+      const logicalWidth = sourceCanvas.width / zoom;
+      const logicalHeight = sourceCanvas.height / zoom;
+
+      // Calculate proportional scaling (Letterbox/Pillarbox)
+      const fit = this.calculateFitDimensions(
+        logicalWidth,
+        logicalHeight,
+        canvas.width,
+        canvas.height
+      );
+
       // Create intermediate canvas with CSS filter applied
       if (!this.intermediateCanvas ||
           this.intermediateCanvas.width !== sourceCanvas.width ||
@@ -181,11 +237,19 @@ export class Compositor {
         this.intermediateCtx.drawImage(sourceCanvas, 0, 0);
         this.intermediateCtx.filter = 'none'; // Reset filter
 
-        // Draw filtered result to main canvas
-        ctx.drawImage(this.intermediateCanvas, 0, 0, canvas.width, canvas.height);
+        // Draw with proportional scaling to prevent distortion
+        ctx.drawImage(
+          this.intermediateCanvas,
+          0, 0, sourceCanvas.width, sourceCanvas.height,  // source rect
+          fit.offsetX, fit.offsetY, fit.drawWidth, fit.drawHeight  // dest rect
+        );
       } else {
-        // Fallback: direct draw without filter
-        ctx.drawImage(sourceCanvas, 0, 0, canvas.width, canvas.height);
+        // Fallback: direct draw with proportional scaling
+        ctx.drawImage(
+          sourceCanvas,
+          0, 0, sourceCanvas.width, sourceCanvas.height,
+          fit.offsetX, fit.offsetY, fit.drawWidth, fit.drawHeight
+        );
       }
     }
 

@@ -5,6 +5,7 @@ import { CameraSettings, DEFAULT_CAMERA_SETTINGS } from './CameraBubble';
 export interface UseRecorderOptions {
   getCanvas: () => HTMLCanvasElement | null;
   getBackgroundColor: () => string;
+  getZoom: () => number;
 }
 
 export interface UseRecorderReturn {
@@ -27,7 +28,7 @@ const BUBBLE_DIAMETER = 180;
 const BUBBLE_MARGIN = 30;
 
 export function useRecorder(options: UseRecorderOptions): UseRecorderReturn {
-  const { getCanvas, getBackgroundColor } = options;
+  const { getCanvas, getBackgroundColor, getZoom } = options;
 
   const [isRecording, setIsRecording] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
@@ -107,10 +108,11 @@ export function useRecorder(options: UseRecorderOptions): UseRecorderReturn {
     }
 
     try {
-      // Initialize Compositor with canvas getter and background color getter
+      // Initialize Compositor with canvas getter, background color getter, and zoom getter
       const compositor = new Compositor(RECORDING_WIDTH, RECORDING_HEIGHT);
       compositor.setSourceCanvasGetter(getCanvas);
       compositor.setBackgroundColorGetter(getBackgroundColor);
+      compositor.setZoomGetter(getZoom);
       compositor.setCameraSource(cameraVideoRef.current, bubbleConfigRef.current);
 
       // Enable recording timer
@@ -151,7 +153,7 @@ export function useRecorder(options: UseRecorderOptions): UseRecorderReturn {
       console.error('Failed to start recording:', error);
       throw error;
     }
-  }, [cameraStream, getCanvas, getBackgroundColor]);
+  }, [cameraStream, getCanvas, getBackgroundColor, getZoom]);
 
   const stopRecording = useCallback(async (): Promise<Blob> => {
     return new Promise((resolve, reject) => {
