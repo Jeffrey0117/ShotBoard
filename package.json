@@ -9,9 +9,26 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@codemirror/commands": "^6.10.1",
+    "@codemirror/lang-markdown": "^6.5.0",
+    "@codemirror/language": "^6.12.1",
+    "@codemirror/language-data": "^6.5.2",
+    "@codemirror/search": "^6.5.11",
+    "@codemirror/state": "^6.5.3",
+    "@codemirror/view": "^6.39.7",
     "@excalidraw/excalidraw": "^0.17.0",
+    "framer-motion": "^12.23.26",
+    "fuse.js": "^7.1.0",
+    "gray-matter": "^4.0.3",
+    "mermaid": "^11.12.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-markdown": "^10.1.0",
+    "rehype-katex": "^7.0.1",
+    "rehype-prism-plus": "^2.0.1",
+    "rehype-raw": "^7.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
     "zustand": "^4.4.7"
   },
   "devDependencies": {

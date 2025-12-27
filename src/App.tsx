@@ -1,4 +1,4 @@
-import { useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect, useCallback, useState } from 'react';
 import { Whiteboard, WhiteboardAPI } from './components/Whiteboard';
 import { Toolbar } from './components/Toolbar';
 import { PagePanel } from './components/PagePanel';
@@ -6,18 +6,90 @@ import { CameraBubble } from './components/Recorder/CameraBubble';
 import { useRecorder } from './components/Recorder/useRecorder';
 import { useProjectStore } from './stores/projectStore';
 import { usePageStore } from './stores/pageStore';
+import { SlidePlayer } from './components/Slides';
+import { useSlideStore } from './stores/slideStore';
 import './App.css';
+
+// Default markdown template
+const DEFAULT_MARKDOWN = `---
+title: 我的簡報
+author:
+theme: default
+---
+
+# 第一頁標題
+
+在這裡寫內容
+
+---
+
+# 第二頁
+
+- 重點一
+- 重點二
+- 重點三
+
+---
+
+# 結束
+
+謝謝觀看！
+`;
 
 function App() {
   const whiteboardRef = useRef<WhiteboardAPI>(null);
   const isDirty = useProjectStore((state) => state.isDirty);
 
-  // Page store
+  // Slide mode state
+  const [isSlideMode, setIsSlideMode] = useState(false);
+  const [isSlideEditorOpen, setIsSlideEditorOpen] = useState(false);
+  const [markdownContent, setMarkdownContent] = useState(DEFAULT_MARKDOWN);
+  const presentation = useSlideStore((state) => state.presentation);
+  const theme = useSlideStore((state) => state.theme);
+  const parseFromMarkdown = useSlideStore((state) => state.parseFromMarkdown);
+
+  // Page store - must be before handlers that use them
   const currentPageId = usePageStore((state) => state.currentPageId);
   const saveCurrentPageState = usePageStore((state) => state.saveCurrentPageState);
   const updateThumbnail = usePageStore((state) => state.updateThumbnail);
   const getPageById = usePageStore((state) => state.getPageById);
   const pages = usePageStore((state) => state.pages);
+  const importSlidesAsPages = usePageStore((state) => state.importSlidesAsPages);
+  const getCurrentPage = usePageStore((state) => state.getCurrentPage);
+
+  // Get current page's slide background
+  const currentPage = getCurrentPage();
+  const slideBackground = currentPage?.slideBackground;
+
+  // Open slide editor
+  const handleOpenSlides = useCallback(() => {
+    setIsSlideEditorOpen(true);
+  }, []);
+
+  // Start presentation from editor (fullscreen mode)
+  const handleStartPresentation = useCallback(() => {
+    parseFromMarkdown(markdownContent);
+    setIsSlideEditorOpen(false);
+    setIsSlideMode(true);
+  }, [parseFromMarkdown, markdownContent]);
+
+  // Import slides as whiteboard pages (integrated mode)
+  const handleImportAsPages = useCallback(() => {
+    importSlidesAsPages(markdownContent, 'default');
+    setIsSlideEditorOpen(false);
+    // Load the first page after import
+    setTimeout(() => {
+      const newPage = usePageStore.getState().getCurrentPage();
+      if (newPage && whiteboardRef.current) {
+        whiteboardRef.current.loadPageState(newPage);
+      }
+    }, 0);
+  }, [importSlidesAsPages, markdownContent]);
+
+  // Close slides handler
+  const handleCloseSlides = useCallback(() => {
+    setIsSlideMode(false);
+  }, []);
 
   // Provide getCanvas, getBackgroundColor, and getZoom functions to useRecorder
   const getCanvas = useCallback(() => {
@@ -143,6 +215,11 @@ function App() {
     <div className="app">
       <header className="app-header">
         <h1 className="app-title">ShotBoard</h1>
+        <div className="app-header-actions">
+          <button className="header-btn header-btn--slides" onClick={handleOpenSlides}>
+            📊 簡報
+          </button>
+        </div>
         <div className="app-status">
           <span className="page-indicator">
             {usePageStore.getState().getCurrentPageIndex() + 1} / {pages.length}
@@ -159,7 +236,11 @@ function App() {
         />
 
         <div className="whiteboard-wrapper">
-          <Whiteboard ref={whiteboardRef} className="whiteboard-container" />
+          <Whiteboard
+            ref={whiteboardRef}
+            className="whiteboard-container"
+            slideBackground={slideBackground}
+          />
         </div>
 
         <Toolbar
@@ -181,6 +262,57 @@ function App() {
           />
         )}
       </main>
+
+      {/* Markdown Editor Dialog */}
+      {isSlideEditorOpen && (
+        <div className="slide-editor-overlay">
+          <div className="slide-editor-dialog">
+            <div className="slide-editor-header">
+              <h2>Markdown 簡報編輯器</h2>
+              <p className="slide-editor-hint">用 <code>---</code> 分隔每一頁</p>
+            </div>
+            <textarea
+              className="slide-editor-textarea"
+              value={markdownContent}
+              onChange={(e) => setMarkdownContent(e.target.value)}
+              placeholder="輸入 Markdown 內容..."
+              spellCheck={false}
+            />
+            <div className="slide-editor-footer">
+              <button
+                className="slide-editor-btn slide-editor-btn--cancel"
+                onClick={() => setIsSlideEditorOpen(false)}
+              >
+                取消
+              </button>
+              <button
+                className="slide-editor-btn slide-editor-btn--import"
+                onClick={handleImportAsPages}
+              >
+                📄 匯入為頁面
+              </button>
+              <button
+                className="slide-editor-btn slide-editor-btn--start"
+                onClick={handleStartPresentation}
+              >
+                ▶ 全屏播放
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Slide Player */}
+      {isSlideMode && presentation && (
+        <div className="slide-mode-container">
+          <SlidePlayer
+            presentation={presentation}
+            theme={theme}
+            showControls={true}
+            onExit={handleCloseSlides}
+          />
+        </div>
+      )}
     </div>
   );
 }

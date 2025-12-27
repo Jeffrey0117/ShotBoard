@@ -11,6 +11,13 @@ import type { BinaryFiles } from '@excalidraw/excalidraw/types/types';
 // 類型定義
 // ============================================================================
 
+/** 投影片背景設定 */
+export interface SlideBackground {
+  type: 'slide';
+  content: string;      // Markdown 內容
+  theme: string;        // 主題 ID
+}
+
 export interface WhiteboardPage {
   id: string;
   name: string;
@@ -23,6 +30,8 @@ export interface WhiteboardPage {
   thumbnail: string | null;
   createdAt: number;
   updatedAt: number;
+  /** 投影片背景（可選） */
+  slideBackground?: SlideBackground;
 }
 
 interface PageState {
@@ -64,6 +73,9 @@ interface PageActions {
   loadPages: (pages: WhiteboardPage[], currentPageId?: string) => void;
   exportPages: () => { pages: WhiteboardPage[]; currentPageId: string };
   reset: () => void;
+
+  // 簡報整合
+  importSlidesAsPages: (markdown: string, theme?: string) => void;
 }
 
 type PageStore = PageState & PageActions;
@@ -295,6 +307,69 @@ export const usePageStore = create<PageStore>((set, get) => ({
       pages: [newPage],
       currentPageId: newPage.id,
       isGeneratingThumbnail: false,
+    });
+  },
+
+  // ===== 簡報整合 =====
+
+  importSlidesAsPages: (markdown, theme = 'default') => {
+    // 正規化換行符
+    const normalizedMarkdown = markdown.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+    // 分離 front matter 和內容
+    const frontMatterMatch = normalizedMarkdown.match(/^---\s*\n([\s\S]*?)\n---\s*\n([\s\S]*)$/);
+    let content = normalizedMarkdown;
+    let slideTitle = '簡報';
+
+    if (frontMatterMatch) {
+      const yamlContent = frontMatterMatch[1];
+      content = frontMatterMatch[2];
+
+      // 提取標題
+      const titleMatch = yamlContent.match(/title:\s*(.+)/);
+      if (titleMatch) {
+        slideTitle = titleMatch[1].trim().replace(/^['"]|['"]$/g, '');
+      }
+    }
+
+    // 用 --- 分割投影片
+    const slideContents = content.split(/\n---\s*\n/).filter(s => s.trim());
+
+    if (slideContents.length === 0) {
+      console.warn('No slides found in markdown');
+      return;
+    }
+
+    // 為每張投影片建立一個頁面
+    const newPages: WhiteboardPage[] = slideContents.map((slideContent, index) => {
+      // 從內容提取標題作為頁面名稱
+      const h1Match = slideContent.match(/^#\s+(.+)$/m);
+      const h2Match = slideContent.match(/^##\s+(.+)$/m);
+      const pageName = h1Match?.[1] || h2Match?.[1] || `${slideTitle} - ${index + 1}`;
+
+      return {
+        id: generateId(),
+        name: pageName.trim(),
+        elements: [],
+        files: {},
+        viewBackgroundColor: 'transparent', // 透明背景讓投影片內容可見
+        scrollX: 0,
+        scrollY: 0,
+        zoom: 1,
+        thumbnail: null,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
+        slideBackground: {
+          type: 'slide',
+          content: slideContent.trim(),
+          theme,
+        },
+      };
+    });
+
+    set({
+      pages: newPages,
+      currentPageId: newPages[0].id,
     });
   },
 }));

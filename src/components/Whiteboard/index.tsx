@@ -1,9 +1,11 @@
-import { useCallback, forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { useCallback, forwardRef, useImperativeHandle, useRef, useEffect } from 'react';
 import { Excalidraw, exportToBlob } from '@excalidraw/excalidraw';
 import type { ExcalidrawImperativeAPI, BinaryFiles } from '@excalidraw/excalidraw/types/types';
 import type { ExcalidrawElement } from '@excalidraw/excalidraw/types/element/types';
 import { useProjectStore } from '../../stores/projectStore';
-import type { WhiteboardPage } from '../../stores/pageStore';
+import type { WhiteboardPage, SlideBackground } from '../../stores/pageStore';
+import { SlideBackgroundRenderer } from '../Slides/SlideBackgroundRenderer';
+import { DEFAULT_THEME } from '../../stores/slideStore';
 
 export interface WhiteboardAPI {
   insertImage: (dataUrl: string) => Promise<void>;
@@ -20,13 +22,18 @@ export interface WhiteboardAPI {
 
 interface WhiteboardProps {
   className?: string;
+  /** 投影片背景（可選） */
+  slideBackground?: SlideBackground;
 }
 
 // 基準筆畫粗細（zoom=1 時的粗細）
 const BASE_STROKE_WIDTH = 2;
 
-export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
-  function Whiteboard({ className }, ref) {
+const WhiteboardComponent = forwardRef(
+  function WhiteboardInner(
+    { className, slideBackground }: WhiteboardProps,
+    ref: React.ForwardedRef<WhiteboardAPI>
+  ) {
     const excalidrawAPIRef = useRef<ExcalidrawImperativeAPI | null>(null);
     const containerRef = useRef<HTMLDivElement>(null);
     const setDirty = useProjectStore((state) => state.setDirty);
@@ -150,7 +157,7 @@ export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
           viewBackgroundColor: page.viewBackgroundColor,
           scrollX: page.scrollX,
           scrollY: page.scrollY,
-          zoom: { value: page.zoom },
+          zoom: { value: page.zoom as any },
         },
       });
 
@@ -202,6 +209,43 @@ export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
       loadPageState,
       generateThumbnail,
     }), [insertImage, getSceneData, getExcalidrawAPI, getCanvas, getBackgroundColor, getZoom, saveCurrentState, loadPageState, generateThumbnail]);
+
+    // Hide library button with MutationObserver
+    useEffect(() => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const hideLibraryButton = () => {
+        // 找所有 button 並隱藏包含 "Library" 的
+        container.querySelectorAll('button').forEach(btn => {
+          const text = btn.textContent || '';
+          const label = btn.getAttribute('aria-label') || '';
+          if (text.includes('Library') || label.includes('Library')) {
+            (btn as HTMLElement).style.cssText = 'display: none !important; visibility: hidden !important;';
+            // 也隱藏父元素（如果是 wrapper）
+            const parent = btn.parentElement;
+            if (parent && parent.children.length === 1) {
+              (parent as HTMLElement).style.cssText = 'display: none !important;';
+            }
+          }
+        });
+      };
+
+      // 初始執行
+      hideLibraryButton();
+
+      // 監聽 DOM 變化
+      const observer = new MutationObserver(() => {
+        hideLibraryButton();
+      });
+
+      observer.observe(container, {
+        childList: true,
+        subtree: true,
+      });
+
+      return () => observer.disconnect();
+    }, []);
 
     const handleChange = useCallback((_elements: any, appState: any) => {
       // Skip updates when editing text to prevent re-render issues
@@ -259,23 +303,36 @@ export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
       });
     }, [setDirty, updateCanvas]);
 
+    // 決定背景顏色
+    const bgColor = slideBackground ? 'transparent' : '#1a1a2e';
+
     return (
       <div ref={containerRef} className={className} style={{ width: '100%', height: '100%', position: 'relative' }}>
-        <Excalidraw
-          excalidrawAPI={(api) => { excalidrawAPIRef.current = api; }}
-          onChange={handleChange}
-          initialData={{
-            appState: {
-              viewBackgroundColor: '#1a1a2e',
-              gridSize: null,
-              currentItemStrokeColor: '#ffffff',
-              currentItemBackgroundColor: '#3d5a80',
-              currentItemFillStyle: 'solid',
-              currentItemStrokeWidth: BASE_STROKE_WIDTH,
-              currentItemFontFamily: 1,
-              currentItemFontSize: 20,
-            },
-          }}
+        {/* 投影片背景層 */}
+        {slideBackground && (
+          <SlideBackgroundRenderer
+            content={slideBackground.content}
+            theme={DEFAULT_THEME}
+          />
+        )}
+
+        {/* Excalidraw 畫布層 */}
+        <div style={{ position: 'relative', width: '100%', height: '100%', zIndex: 1 }}>
+          <Excalidraw
+            excalidrawAPI={(api) => { excalidrawAPIRef.current = api; }}
+            onChange={handleChange}
+            initialData={{
+              appState: {
+                viewBackgroundColor: bgColor,
+                gridSize: null,
+                currentItemStrokeColor: '#ffffff',
+                currentItemBackgroundColor: '#3d5a80',
+                currentItemFillStyle: 'solid',
+                currentItemStrokeWidth: BASE_STROKE_WIDTH,
+                currentItemFontFamily: 1,
+                currentItemFontSize: 20,
+              },
+            }}
           UIOptions={{
             canvasActions: {
               loadScene: false,
@@ -283,12 +340,20 @@ export const Whiteboard = forwardRef<WhiteboardAPI, WhiteboardProps>(
               export: false,
               saveAsImage: false,
             },
+            tools: {
+              image: false,
+            },
+            welcomeScreen: false,
           }}
+          libraryReturnUrl={null as any}
+          renderTopRightUI={() => null}
           theme="dark"
         />
+        </div>
       </div>
     );
   }
 );
 
-export default Whiteboard;
+export { WhiteboardComponent as Whiteboard };
+export default WhiteboardComponent;
