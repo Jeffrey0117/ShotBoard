@@ -187,6 +187,23 @@ const WhiteboardComponent = forwardRef(
           maxWidthOrHeight: 300,
         });
 
+        // Apply CSS filter to match dark theme display
+        // Excalidraw dark mode uses CSS filter, exportToBlob gets raw pixels
+        const img = await createImageBitmap(blob);
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+
+        if (ctx) {
+          // Dark theme needs filter to match what user sees on screen
+          ctx.filter = 'invert(0.93) hue-rotate(180deg)';
+          ctx.drawImage(img, 0, 0);
+          ctx.filter = 'none';
+          return canvas.toDataURL('image/png');
+        }
+
+        // Fallback without filter
         return new Promise((resolve) => {
           const reader = new FileReader();
           reader.onloadend = () => resolve(reader.result as string);
