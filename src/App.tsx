@@ -2,6 +2,7 @@ import { useRef, useEffect, useCallback, useState } from 'react';
 import { Whiteboard, WhiteboardAPI } from './components/Whiteboard';
 import { Toolbar } from './components/Toolbar';
 import { PagePanel } from './components/PagePanel';
+import { NotesPanel } from './components/NotesPanel';
 import { CameraBubble } from './components/Recorder/CameraBubble';
 import { useRecorder } from './components/Recorder/useRecorder';
 import { useProjectStore } from './stores/projectStore';
@@ -235,12 +236,16 @@ function App() {
           onPageSwitch={handlePageSwitch}
         />
 
-        <div className="whiteboard-wrapper">
-          <Whiteboard
-            ref={whiteboardRef}
-            className="whiteboard-container"
-            slideBackground={slideBackground}
-          />
+        <div className="content-area">
+          <div className="whiteboard-wrapper">
+            <Whiteboard
+              ref={whiteboardRef}
+              className="whiteboard-container"
+              slideBackground={slideBackground}
+            />
+          </div>
+
+          <NotesPanel />
         </div>
 
         <Toolbar

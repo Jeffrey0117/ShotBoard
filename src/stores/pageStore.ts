@@ -32,6 +32,8 @@ export interface WhiteboardPage {
   updatedAt: number;
   /** 投影片背景（可選） */
   slideBackground?: SlideBackground;
+  /** 演講者備忘稿（不會被錄影） */
+  notes: string;
 }
 
 interface PageState {
@@ -63,6 +65,9 @@ interface PageActions {
 
   // 縮圖
   updateThumbnail: (id: string, thumbnail: string) => void;
+
+  // 備忘稿
+  updateNotes: (id: string, notes: string) => void;
 
   // 取得器
   getCurrentPage: () => WhiteboardPage | null;
@@ -100,6 +105,7 @@ const createEmptyPage = (name?: string): WhiteboardPage => {
     thumbnail: null,
     createdAt: Date.now(),
     updatedAt: Date.now(),
+    notes: '',
   };
 };
 
@@ -168,6 +174,7 @@ export const usePageStore = create<PageStore>((set, get) => ({
       id: generateId(),
       name: `${originalPage.name} (複製)`,
       thumbnail: originalPage.thumbnail,
+      notes: originalPage.notes,
       createdAt: Date.now(),
       updatedAt: Date.now(),
     };
@@ -256,6 +263,16 @@ export const usePageStore = create<PageStore>((set, get) => ({
     set((state) => ({
       pages: state.pages.map((p) =>
         p.id === id ? { ...p, thumbnail } : p
+      ),
+    }));
+  },
+
+  // ===== 備忘稿 =====
+
+  updateNotes: (id, notes) => {
+    set((state) => ({
+      pages: state.pages.map((p) =>
+        p.id === id ? { ...p, notes, updatedAt: Date.now() } : p
       ),
     }));
   },
@@ -364,6 +381,7 @@ export const usePageStore = create<PageStore>((set, get) => ({
           content: slideContent.trim(),
           theme,
         },
+        notes: '',
       };
     });
 
