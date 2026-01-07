@@ -49,6 +49,13 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    emptyOutDir: true
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, 'index.html'),
+        'screenshot-overlay': resolve(__dirname, 'screenshot-overlay.html'),
+        'region-selector': resolve(__dirname, 'region-selector.html')
+      }
+    }
   }
 })

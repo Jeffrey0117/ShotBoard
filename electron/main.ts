@@ -1,6 +1,7 @@
 import { app, BrowserWindow, globalShortcut, ipcMain, desktopCapturer, session } from 'electron'
 import path from 'path'
 import { registerScreenshotHandlers, captureScreen, captureRegion } from './screenshot'
+import { registerScreenRecordingHandlers } from './screenRecording'
 
 // Performance optimizations
 app.commandLine.appendSwitch('disable-renderer-backgrounding')
@@ -70,6 +71,7 @@ app.whenReady().then(() => {
   createWindow()
   registerShortcuts()
   registerScreenshotHandlers()
+  registerScreenRecordingHandlers()
 
   // Handle getDisplayMedia for screen recording
   session.defaultSession.setDisplayMediaRequestHandler(async (_request, callback) => {
