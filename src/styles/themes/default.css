@@ -1,0 +1,225 @@
+/**
+ * Default Theme - Light
+ * 預設亮色主題
+ *
+ * 乾淨、專業的亮色風格
+ * 適合正式場合、商業簡報
+ */
+
+/* ============================================================================
+   主題變數
+   ============================================================================ */
+
+[data-theme="default"],
+.theme-default {
+  /* 顏色 */
+  --slide-color-primary: #3b82f6;
+  --slide-color-secondary: #6366f1;
+  --slide-color-accent: #8b5cf6;
+  --slide-color-background: #ffffff;
+  --slide-color-background-secondary: #f8fafc;
+  --slide-color-text: #1f2937;
+  --slide-color-text-secondary: #4b5563;
+  --slide-color-text-muted: #9ca3af;
+  --slide-color-success: #10b981;
+  --slide-color-warning: #f59e0b;
+  --slide-color-error: #ef4444;
+  --slide-color-info: #3b82f6;
+  --slide-color-code-background: #f1f5f9;
+  --slide-color-code-foreground: #1e293b;
+
+  /* 字體 */
+  --slide-font-heading: "Inter", "Noto Sans TC", -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --slide-font-body: "Inter", "Noto Sans TC", -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --slide-font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Consolas, monospace;
+
+  /* 字體大小 */
+  --slide-font-size-h1: 3rem;
+  --slide-font-size-h2: 2.25rem;
+  --slide-font-size-h3: 1.5rem;
+  --slide-font-size-body: 1.125rem;
+  --slide-font-size-small: 0.875rem;
+  --slide-font-size-code: 0.9rem;
+
+  /* 字體粗細 */
+  --slide-font-weight-normal: 400;
+  --slide-font-weight-medium: 500;
+  --slide-font-weight-bold: 700;
+
+  /* 行高 */
+  --slide-line-height-tight: 1.25;
+  --slide-line-height-normal: 1.5;
+  --slide-line-height-relaxed: 1.75;
+
+  /* 間距 */
+  --slide-padding: 4rem;
+  --slide-content-gap: 1.5rem;
+  --slide-section-gap: 3rem;
+}
+
+/* ============================================================================
+   主題特定樣式
+   ============================================================================ */
+
+[data-theme="default"] .slide,
+.theme-default .slide {
+  background: var(--slide-color-background);
+  color: var(--slide-color-text);
+}
+
+/* 標題樣式 */
+[data-theme="default"] .slide h1,
+.theme-default .slide h1 {
+  color: var(--slide-color-text);
+  font-weight: 700;
+}
+
+[data-theme="default"] .slide h2,
+.theme-default .slide h2 {
+  color: var(--slide-color-text);
+  position: relative;
+  padding-bottom: 0.5em;
+}
+
+[data-theme="default"] .slide h2::after,
+.theme-default .slide h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 3em;
+  height: 3px;
+  background: var(--slide-color-primary);
+  border-radius: 2px;
+}
+
+/* 連結樣式 */
+[data-theme="default"] .slide a,
+.theme-default .slide a {
+  color: var(--slide-color-primary);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+[data-theme="default"] .slide a:hover,
+.theme-default .slide a:hover {
+  border-bottom-color: var(--slide-color-primary);
+}
+
+/* 程式碼區塊 */
+[data-theme="default"] .slide pre,
+.theme-default .slide pre {
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+/* 引用區塊 */
+[data-theme="default"] .slide blockquote,
+.theme-default .slide blockquote {
+  background: var(--slide-color-background-secondary);
+  border-radius: 0 8px 8px 0;
+  padding: 1em 1.5em;
+}
+
+/* 表格樣式 */
+[data-theme="default"] .slide table,
+.theme-default .slide table {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+[data-theme="default"] .slide th,
+.theme-default .slide th {
+  background: #f1f5f9;
+}
+
+/* 清單標記 */
+[data-theme="default"] .slide li::marker,
+.theme-default .slide li::marker {
+  color: var(--slide-color-primary);
+}
+
+/* ============================================================================
+   Cover 佈局
+   ============================================================================ */
+
+[data-theme="default"] .slide[data-layout="cover"],
+.theme-default .slide[data-layout="cover"] {
+  background: linear-gradient(
+    135deg,
+    var(--slide-color-primary) 0%,
+    var(--slide-color-secondary) 100%
+  );
+  color: #ffffff;
+}
+
+[data-theme="default"] .slide[data-layout="cover"] h1,
+[data-theme="default"] .slide[data-layout="cover"] h2,
+[data-theme="default"] .slide[data-layout="cover"] p,
+.theme-default .slide[data-layout="cover"] h1,
+.theme-default .slide[data-layout="cover"] h2,
+.theme-default .slide[data-layout="cover"] p {
+  color: #ffffff;
+}
+
+[data-theme="default"] .slide[data-layout="cover"] h2::after,
+.theme-default .slide[data-layout="cover"] h2::after {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* ============================================================================
+   Section 佈局
+   ============================================================================ */
+
+[data-theme="default"] .slide[data-layout="section"],
+.theme-default .slide[data-layout="section"] {
+  background: var(--slide-color-background-secondary);
+}
+
+[data-theme="default"] .slide[data-layout="section"] h2,
+.theme-default .slide[data-layout="section"] h2 {
+  font-size: var(--slide-font-size-h1);
+}
+
+/* ============================================================================
+   Quote 佈局
+   ============================================================================ */
+
+[data-theme="default"] .slide[data-layout="quote"],
+.theme-default .slide[data-layout="quote"] {
+  background: var(--slide-color-background-secondary);
+}
+
+[data-theme="default"] .slide[data-layout="quote"] blockquote,
+.theme-default .slide[data-layout="quote"] blockquote {
+  font-size: 1.5rem;
+  max-width: 80%;
+  border-left-width: 6px;
+  background: transparent;
+}
+
+/* ============================================================================
+   End 佈局
+   ============================================================================ */
+
+[data-theme="default"] .slide[data-layout="end"],
+.theme-default .slide[data-layout="end"] {
+  background: var(--slide-color-text);
+  color: var(--slide-color-background);
+}
+
+[data-theme="default"] .slide[data-layout="end"] h1,
+[data-theme="default"] .slide[data-layout="end"] h2,
+.theme-default .slide[data-layout="end"] h1,
+.theme-default .slide[data-layout="end"] h2 {
+  color: var(--slide-color-background);
+}
+
+[data-theme="default"] .slide[data-layout="end"] h2::after,
+.theme-default .slide[data-layout="end"] h2::after {
+  background: var(--slide-color-primary);
+}

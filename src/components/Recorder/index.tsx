@@ -6,10 +6,11 @@ import { Toolbar } from '../Toolbar';
 interface RecorderProps {
   getCanvas: () => HTMLCanvasElement | null;
   getBackgroundColor: () => string;
+  getZoom: () => number;
 }
 
-export const Recorder: React.FC<RecorderProps> = ({ getCanvas, getBackgroundColor }) => {
-  const options: UseRecorderOptions = { getCanvas, getBackgroundColor };
+export const Recorder: React.FC<RecorderProps> = ({ getCanvas, getBackgroundColor, getZoom }) => {
+  const options: UseRecorderOptions = { getCanvas, getBackgroundColor, getZoom };
 
   const {
     isRecording,

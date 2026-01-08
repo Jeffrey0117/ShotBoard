@@ -1,0 +1,310 @@
+/**
+ * Minimal Theme
+ * 極簡黑白主題
+ *
+ * 純淨、無裝飾的極簡風格
+ * 適合學術演講、設計展示、專注內容的場合
+ */
+
+/* ============================================================================
+   主題變數
+   ============================================================================ */
+
+[data-theme="minimal"],
+.theme-minimal {
+  /* 顏色 - 純黑白調色盤 */
+  --slide-color-primary: #000000;
+  --slide-color-secondary: #333333;
+  --slide-color-accent: #666666;
+  --slide-color-background: #ffffff;
+  --slide-color-background-secondary: #fafafa;
+  --slide-color-text: #000000;
+  --slide-color-text-secondary: #333333;
+  --slide-color-text-muted: #666666;
+  --slide-color-success: #000000;
+  --slide-color-warning: #000000;
+  --slide-color-error: #000000;
+  --slide-color-info: #000000;
+  --slide-color-code-background: #f5f5f5;
+  --slide-color-code-foreground: #000000;
+
+  /* 字體 - 使用經典無襯線字體 */
+  --slide-font-heading: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+  --slide-font-body: "Helvetica Neue", "Helvetica", Arial, sans-serif;
+  --slide-font-mono: "SF Mono", "Monaco", "Menlo", Consolas, monospace;
+
+  /* 字體大小 - 較大以增強可讀性 */
+  --slide-font-size-h1: 3.5rem;
+  --slide-font-size-h2: 2.5rem;
+  --slide-font-size-h3: 1.75rem;
+  --slide-font-size-body: 1.25rem;
+  --slide-font-size-small: 1rem;
+  --slide-font-size-code: 1rem;
+
+  /* 字體粗細 - 較輕量 */
+  --slide-font-weight-normal: 300;
+  --slide-font-weight-medium: 400;
+  --slide-font-weight-bold: 600;
+
+  /* 行高 - 較寬鬆 */
+  --slide-line-height-tight: 1.2;
+  --slide-line-height-normal: 1.6;
+  --slide-line-height-relaxed: 1.8;
+
+  /* 間距 - 較大留白 */
+  --slide-padding: 5rem;
+  --slide-content-gap: 2rem;
+  --slide-section-gap: 4rem;
+}
+
+/* ============================================================================
+   主題特定樣式
+   ============================================================================ */
+
+[data-theme="minimal"] .slide,
+.theme-minimal .slide {
+  background: var(--slide-color-background);
+  color: var(--slide-color-text);
+}
+
+/* 標題樣式 - 緊湊字距 */
+[data-theme="minimal"] .slide h1,
+[data-theme="minimal"] .slide h2,
+[data-theme="minimal"] .slide h3,
+.theme-minimal .slide h1,
+.theme-minimal .slide h2,
+.theme-minimal .slide h3 {
+  letter-spacing: -0.02em;
+  font-weight: var(--slide-font-weight-bold);
+}
+
+[data-theme="minimal"] .slide h1,
+.theme-minimal .slide h1 {
+  font-size: var(--slide-font-size-h1);
+  margin-bottom: var(--slide-section-gap);
+}
+
+[data-theme="minimal"] .slide h2,
+.theme-minimal .slide h2 {
+  font-size: var(--slide-font-size-h2);
+}
+
+/* 無下劃線裝飾 */
+[data-theme="minimal"] .slide h2::after,
+.theme-minimal .slide h2::after {
+  display: none;
+}
+
+/* 連結樣式 */
+[data-theme="minimal"] .slide a,
+.theme-minimal .slide a {
+  color: var(--slide-color-text);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+[data-theme="minimal"] .slide a:hover,
+.theme-minimal .slide a:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* 清單樣式 - 使用破折號 */
+[data-theme="minimal"] .slide ul,
+.theme-minimal .slide ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+[data-theme="minimal"] .slide ul > li,
+.theme-minimal .slide ul > li {
+  position: relative;
+  padding-left: 1.5em;
+}
+
+[data-theme="minimal"] .slide ul > li::before,
+.theme-minimal .slide ul > li::before {
+  content: "\2014";
+  position: absolute;
+  left: 0;
+  color: var(--slide-color-text-muted);
+}
+
+[data-theme="minimal"] .slide ol,
+.theme-minimal .slide ol {
+  padding-left: 1.5em;
+}
+
+[data-theme="minimal"] .slide li,
+.theme-minimal .slide li {
+  margin-bottom: 0.75em;
+}
+
+/* 程式碼區塊 */
+[data-theme="minimal"] .slide pre,
+.theme-minimal .slide pre {
+  border: 1px solid #e0e0e0;
+  border-radius: 0;
+}
+
+[data-theme="minimal"] .slide code,
+.theme-minimal .slide code {
+  border-radius: 0;
+  border: 1px solid #e0e0e0;
+}
+
+/* 引用區塊 */
+[data-theme="minimal"] .slide blockquote,
+.theme-minimal .slide blockquote {
+  border-left: 2px solid var(--slide-color-text);
+  padding-left: 1.5em;
+  margin-left: 0;
+  font-style: italic;
+  background: transparent;
+}
+
+/* 表格樣式 */
+[data-theme="minimal"] .slide table,
+.theme-minimal .slide table {
+  border: none;
+}
+
+[data-theme="minimal"] .slide th,
+[data-theme="minimal"] .slide td,
+.theme-minimal .slide th,
+.theme-minimal .slide td {
+  border-bottom: 1px solid #e0e0e0;
+  background: transparent;
+}
+
+[data-theme="minimal"] .slide th,
+.theme-minimal .slide th {
+  font-weight: var(--slide-font-weight-medium);
+  text-transform: uppercase;
+  font-size: var(--slide-font-size-small);
+  letter-spacing: 0.05em;
+}
+
+[data-theme="minimal"] .slide tr:hover td,
+.theme-minimal .slide tr:hover td {
+  background: transparent;
+}
+
+/* 分隔線 */
+[data-theme="minimal"] .slide hr,
+.theme-minimal .slide hr {
+  background: var(--slide-color-text);
+  height: 1px;
+  margin: var(--slide-section-gap) auto;
+  max-width: 100px;
+}
+
+/* ============================================================================
+   Cover 佈局
+   ============================================================================ */
+
+[data-theme="minimal"] .slide[data-layout="cover"],
+.theme-minimal .slide[data-layout="cover"] {
+  background: var(--slide-color-text);
+  color: var(--slide-color-background);
+}
+
+[data-theme="minimal"] .slide[data-layout="cover"] h1,
+[data-theme="minimal"] .slide[data-layout="cover"] h2,
+[data-theme="minimal"] .slide[data-layout="cover"] p,
+.theme-minimal .slide[data-layout="cover"] h1,
+.theme-minimal .slide[data-layout="cover"] h2,
+.theme-minimal .slide[data-layout="cover"] p {
+  color: var(--slide-color-background);
+}
+
+/* ============================================================================
+   Section 佈局
+   ============================================================================ */
+
+[data-theme="minimal"] .slide[data-layout="section"],
+.theme-minimal .slide[data-layout="section"] {
+  background: var(--slide-color-background);
+}
+
+[data-theme="minimal"] .slide[data-layout="section"] h2,
+.theme-minimal .slide[data-layout="section"] h2 {
+  font-size: var(--slide-font-size-h1);
+  font-weight: var(--slide-font-weight-normal);
+}
+
+/* ============================================================================
+   Quote 佈局
+   ============================================================================ */
+
+[data-theme="minimal"] .slide[data-layout="quote"],
+.theme-minimal .slide[data-layout="quote"] {
+  background: var(--slide-color-background);
+}
+
+[data-theme="minimal"] .slide[data-layout="quote"] blockquote,
+.theme-minimal .slide[data-layout="quote"] blockquote {
+  font-size: 1.75rem;
+  font-weight: var(--slide-font-weight-normal);
+  max-width: 70%;
+  text-align: left;
+}
+
+[data-theme="minimal"] .slide[data-layout="quote"] cite,
+.theme-minimal .slide[data-layout="quote"] cite {
+  font-size: 1rem;
+  font-style: normal;
+  margin-top: 1.5em;
+}
+
+/* ============================================================================
+   Fact 佈局
+   ============================================================================ */
+
+[data-theme="minimal"] .slide[data-layout="fact"],
+.theme-minimal .slide[data-layout="fact"] {
+  background: var(--slide-color-background);
+}
+
+[data-theme="minimal"] .slide[data-layout="fact"] h1,
+.theme-minimal .slide[data-layout="fact"] h1 {
+  font-size: 6rem;
+  font-weight: var(--slide-font-weight-bold);
+}
+
+/* ============================================================================
+   End 佈局
+   ============================================================================ */
+
+[data-theme="minimal"] .slide[data-layout="end"],
+.theme-minimal .slide[data-layout="end"] {
+  background: var(--slide-color-background);
+}
+
+[data-theme="minimal"] .slide[data-layout="end"] h1,
+[data-theme="minimal"] .slide[data-layout="end"] h2,
+.theme-minimal .slide[data-layout="end"] h1,
+.theme-minimal .slide[data-layout="end"] h2 {
+  font-weight: var(--slide-font-weight-normal);
+}
+
+/* ============================================================================
+   反轉樣式輔助類
+   ============================================================================ */
+
+[data-theme="minimal"] .slide .invert,
+.theme-minimal .slide .invert {
+  background: var(--slide-color-text);
+  color: var(--slide-color-background);
+}
+
+[data-theme="minimal"] .slide .border,
+.theme-minimal .slide .border {
+  border: 1px solid currentColor;
+  padding: 0.5em 1em;
+}
+
+[data-theme="minimal"] .slide .uppercase,
+.theme-minimal .slide .uppercase {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}

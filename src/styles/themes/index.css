@@ -1,0 +1,15 @@
+/**
+ * Slide Themes - Main Entry Point
+ * 主題樣式統一導入
+ *
+ * 導入此檔案即可使用所有內建主題
+ */
+
+/* 基礎樣式（必須先導入） */
+@import './base.css';
+
+/* 內建主題 */
+@import './default.css';
+@import './dark.css';
+@import './minimal.css';
+@import './gradient.css';

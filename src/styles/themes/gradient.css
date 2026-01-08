@@ -1,0 +1,390 @@
+/**
+ * Gradient Theme
+ * 漸層主題
+ *
+ * 炫彩、活力的漸層風格
+ * 適合創意展示、產品發佈、科技主題
+ */
+
+/* ============================================================================
+   主題變數
+   ============================================================================ */
+
+[data-theme="gradient"],
+.theme-gradient {
+  /* 顏色 - 炫彩調色盤 */
+  --slide-color-primary: #f472b6;
+  --slide-color-secondary: #c084fc;
+  --slide-color-accent: #38bdf8;
+  --slide-color-background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f472b6 100%);
+  --slide-color-background-secondary: linear-gradient(135deg, #5a67d8 0%, #6b46c1 50%, #ec4899 100%);
+  --slide-color-text: #ffffff;
+  --slide-color-text-secondary: rgba(255, 255, 255, 0.85);
+  --slide-color-text-muted: rgba(255, 255, 255, 0.6);
+  --slide-color-success: #4ade80;
+  --slide-color-warning: #fbbf24;
+  --slide-color-error: #fb7185;
+  --slide-color-info: #38bdf8;
+  --slide-color-code-background: rgba(0, 0, 0, 0.3);
+  --slide-color-code-foreground: #f8fafc;
+
+  /* 字體 */
+  --slide-font-heading: "Poppins", "Noto Sans TC", -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --slide-font-body: "Poppins", "Noto Sans TC", -apple-system, BlinkMacSystemFont,
+    sans-serif;
+  --slide-font-mono: "Fira Code", "JetBrains Mono", monospace;
+
+  /* 字體大小 */
+  --slide-font-size-h1: 3.5rem;
+  --slide-font-size-h2: 2.5rem;
+  --slide-font-size-h3: 1.75rem;
+  --slide-font-size-body: 1.25rem;
+  --slide-font-size-small: 1rem;
+  --slide-font-size-code: 0.95rem;
+
+  /* 字體粗細 */
+  --slide-font-weight-normal: 400;
+  --slide-font-weight-medium: 500;
+  --slide-font-weight-bold: 700;
+
+  /* 行高 */
+  --slide-line-height-tight: 1.2;
+  --slide-line-height-normal: 1.5;
+  --slide-line-height-relaxed: 1.75;
+
+  /* 間距 */
+  --slide-padding: 4rem;
+  --slide-content-gap: 1.5rem;
+  --slide-section-gap: 3rem;
+}
+
+/* ============================================================================
+   主題特定樣式
+   ============================================================================ */
+
+[data-theme="gradient"] .slide,
+.theme-gradient .slide {
+  background: var(--slide-color-background);
+  color: var(--slide-color-text);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 標題樣式 */
+[data-theme="gradient"] .slide h1,
+.theme-gradient .slide h1 {
+  color: var(--slide-color-text);
+  font-weight: var(--slide-font-weight-bold);
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="gradient"] .slide h2,
+.theme-gradient .slide h2 {
+  color: var(--slide-color-text);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="gradient"] .slide h2::after,
+.theme-gradient .slide h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 3em;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 2px;
+}
+
+/* 連結樣式 */
+[data-theme="gradient"] .slide a,
+.theme-gradient .slide a {
+  color: var(--slide-color-text);
+  text-decoration: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+  transition: border-color 0.2s ease;
+}
+
+[data-theme="gradient"] .slide a:hover,
+.theme-gradient .slide a:hover {
+  border-bottom-color: var(--slide-color-text);
+}
+
+/* 程式碼區塊 */
+[data-theme="gradient"] .slide pre,
+.theme-gradient .slide pre {
+  background: var(--slide-color-code-background);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="gradient"] .slide code,
+.theme-gradient .slide code {
+  background: var(--slide-color-code-background);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 引用區塊 */
+[data-theme="gradient"] .slide blockquote,
+.theme-gradient .slide blockquote {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-left: 4px solid rgba(255, 255, 255, 0.5);
+  border-radius: 0 12px 12px 0;
+  padding: 1.5em 2em;
+}
+
+/* 表格樣式 */
+[data-theme="gradient"] .slide table,
+.theme-gradient .slide table {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+[data-theme="gradient"] .slide th,
+.theme-gradient .slide th {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--slide-color-text);
+}
+
+[data-theme="gradient"] .slide td,
+.theme-gradient .slide td {
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  color: var(--slide-color-text-secondary);
+}
+
+[data-theme="gradient"] .slide tr:hover td,
+.theme-gradient .slide tr:hover td {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 清單標記 */
+[data-theme="gradient"] .slide li::marker,
+.theme-gradient .slide li::marker {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* 分隔線 */
+[data-theme="gradient"] .slide hr,
+.theme-gradient .slide hr {
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(255, 255, 255, 0.5),
+    transparent
+  );
+}
+
+/* ============================================================================
+   Cover 佈局
+   ============================================================================ */
+
+[data-theme="gradient"] .slide[data-layout="cover"],
+.theme-gradient .slide[data-layout="cover"] {
+  background: linear-gradient(
+    135deg,
+    #0f0c29 0%,
+    #302b63 50%,
+    #24243e 100%
+  );
+}
+
+[data-theme="gradient"] .slide[data-layout="cover"] h1,
+.theme-gradient .slide[data-layout="cover"] h1 {
+  background: linear-gradient(
+    90deg,
+    #f472b6,
+    #c084fc,
+    #38bdf8
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: gradient-shift 3s ease infinite;
+  background-size: 200% 200%;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ============================================================================
+   Section 佈局
+   ============================================================================ */
+
+[data-theme="gradient"] .slide[data-layout="section"],
+.theme-gradient .slide[data-layout="section"] {
+  background: linear-gradient(
+    135deg,
+    #5a67d8 0%,
+    #6b46c1 100%
+  );
+}
+
+[data-theme="gradient"] .slide[data-layout="section"] h2,
+.theme-gradient .slide[data-layout="section"] h2 {
+  font-size: var(--slide-font-size-h1);
+}
+
+/* ============================================================================
+   Quote 佈局
+   ============================================================================ */
+
+[data-theme="gradient"] .slide[data-layout="quote"],
+.theme-gradient .slide[data-layout="quote"] {
+  background: linear-gradient(
+    135deg,
+    #1a1a2e 0%,
+    #16213e 100%
+  );
+}
+
+[data-theme="gradient"] .slide[data-layout="quote"] blockquote,
+.theme-gradient .slide[data-layout="quote"] blockquote {
+  font-size: 1.75rem;
+  max-width: 80%;
+  background: transparent;
+  border-left-color: var(--slide-color-primary);
+}
+
+/* ============================================================================
+   Fact 佈局
+   ============================================================================ */
+
+[data-theme="gradient"] .slide[data-layout="fact"],
+.theme-gradient .slide[data-layout="fact"] {
+  background: linear-gradient(
+    135deg,
+    #ec4899 0%,
+    #f472b6 50%,
+    #c084fc 100%
+  );
+}
+
+[data-theme="gradient"] .slide[data-layout="fact"] h1,
+.theme-gradient .slide[data-layout="fact"] h1 {
+  font-size: 5rem;
+  color: var(--slide-color-text);
+  text-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================================================
+   End 佈局
+   ============================================================================ */
+
+[data-theme="gradient"] .slide[data-layout="end"],
+.theme-gradient .slide[data-layout="end"] {
+  background: linear-gradient(
+    135deg,
+    #0f0c29 0%,
+    #302b63 100%
+  );
+}
+
+[data-theme="gradient"] .slide[data-layout="end"] h1,
+.theme-gradient .slide[data-layout="end"] h1 {
+  background: linear-gradient(
+    90deg,
+    #38bdf8,
+    #c084fc,
+    #f472b6
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ============================================================================
+   特殊效果輔助類
+   ============================================================================ */
+
+/* 玻璃擬態卡片 */
+[data-theme="gradient"] .slide .glass,
+.theme-gradient .slide .glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 1.5em;
+}
+
+/* 漸層文字 */
+[data-theme="gradient"] .slide .gradient-text,
+.theme-gradient .slide .gradient-text {
+  background: linear-gradient(
+    90deg,
+    #f472b6,
+    #c084fc,
+    #38bdf8
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 發光效果 */
+[data-theme="gradient"] .slide .glow,
+.theme-gradient .slide .glow {
+  text-shadow: 0 0 20px var(--slide-color-primary),
+               0 0 40px var(--slide-color-secondary);
+}
+
+/* 霓虹邊框 */
+[data-theme="gradient"] .slide .neon-border,
+.theme-gradient .slide .neon-border {
+  border: 2px solid var(--slide-color-primary);
+  box-shadow: 0 0 10px var(--slide-color-primary),
+              inset 0 0 10px rgba(244, 114, 182, 0.1);
+  border-radius: 8px;
+  padding: 1em;
+}
+
+/* 脈動動畫 */
+[data-theme="gradient"] .slide .pulse,
+.theme-gradient .slide .pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+/* 浮動效果 */
+[data-theme="gradient"] .slide .float,
+.theme-gradient .slide .float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}

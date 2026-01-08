@@ -215,15 +215,3 @@ const ScreenshotOverlay: React.FC = () => {
 };
 
 export default ScreenshotOverlay;
-
-// TypeScript 類型定義
-declare global {
-  interface Window {
-    electronAPI?: {
-      onScreenshotBackground: (callback: (event: unknown, dataURL: string) => void) => void;
-      removeScreenshotBackgroundListener: () => void;
-      confirmScreenshotRegion: (bounds: SelectionBounds) => void;
-      cancelScreenshot: () => void;
-    };
-  }
-}

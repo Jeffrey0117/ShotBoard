@@ -1,0 +1,380 @@
+/**
+ * Slide Theme Base CSS
+ * 通用的 CSS 變數定義模板
+ *
+ * 所有主題變數以 --slide- 開頭
+ * 這個檔案定義了所有主題需要實作的 CSS 變數
+ */
+
+/* ============================================================================
+   CSS 變數模板
+   ============================================================================ */
+
+:root {
+  /* ----------------------------------------
+     顏色 (Colors)
+     ---------------------------------------- */
+
+  /* 主色調 - 用於標題、連結、強調等 */
+  --slide-color-primary: #3b82f6;
+
+  /* 次要色調 - 用於次要元素 */
+  --slide-color-secondary: #6366f1;
+
+  /* 強調色 - 用於高亮、hover 等 */
+  --slide-color-accent: #8b5cf6;
+
+  /* 主背景色 */
+  --slide-color-background: #ffffff;
+
+  /* 次要背景色 - 用於卡片、區塊等 */
+  --slide-color-background-secondary: #f8fafc;
+
+  /* 主文字色 */
+  --slide-color-text: #1f2937;
+
+  /* 次要文字色 */
+  --slide-color-text-secondary: #4b5563;
+
+  /* 淡化文字色 - 用於提示、placeholder 等 */
+  --slide-color-text-muted: #9ca3af;
+
+  /* 狀態顏色 */
+  --slide-color-success: #10b981;
+  --slide-color-warning: #f59e0b;
+  --slide-color-error: #ef4444;
+  --slide-color-info: #3b82f6;
+
+  /* 程式碼區塊顏色 */
+  --slide-color-code-background: #f1f5f9;
+  --slide-color-code-foreground: #1e293b;
+
+  /* ----------------------------------------
+     字體 (Typography)
+     ---------------------------------------- */
+
+  /* 字體家族 */
+  --slide-font-heading: "Inter", "Noto Sans TC", sans-serif;
+  --slide-font-body: "Inter", "Noto Sans TC", sans-serif;
+  --slide-font-mono: "JetBrains Mono", "Fira Code", monospace;
+
+  /* 字體大小 */
+  --slide-font-size-h1: 3rem;
+  --slide-font-size-h2: 2.25rem;
+  --slide-font-size-h3: 1.5rem;
+  --slide-font-size-body: 1.125rem;
+  --slide-font-size-small: 0.875rem;
+  --slide-font-size-code: 0.9rem;
+
+  /* 字體粗細 */
+  --slide-font-weight-normal: 400;
+  --slide-font-weight-medium: 500;
+  --slide-font-weight-bold: 700;
+
+  /* 行高 */
+  --slide-line-height-tight: 1.25;
+  --slide-line-height-normal: 1.5;
+  --slide-line-height-relaxed: 1.75;
+
+  /* ----------------------------------------
+     間距 (Spacing)
+     ---------------------------------------- */
+
+  /* 投影片內距 */
+  --slide-padding: 4rem;
+
+  /* 內容間距 */
+  --slide-content-gap: 1.5rem;
+
+  /* 區塊間距 */
+  --slide-section-gap: 3rem;
+}
+
+/* ============================================================================
+   基礎投影片樣式
+   ============================================================================ */
+
+.slide {
+  width: 100%;
+  height: 100%;
+  background: var(--slide-color-background);
+  color: var(--slide-color-text);
+  font-family: var(--slide-font-body);
+  font-size: var(--slide-font-size-body);
+  line-height: var(--slide-line-height-normal);
+  padding: var(--slide-padding);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* ============================================================================
+   標題樣式
+   ============================================================================ */
+
+.slide h1 {
+  font-family: var(--slide-font-heading);
+  font-size: var(--slide-font-size-h1);
+  font-weight: var(--slide-font-weight-bold);
+  line-height: var(--slide-line-height-tight);
+  color: var(--slide-color-text);
+  margin-bottom: var(--slide-content-gap);
+}
+
+.slide h2 {
+  font-family: var(--slide-font-heading);
+  font-size: var(--slide-font-size-h2);
+  font-weight: var(--slide-font-weight-bold);
+  line-height: var(--slide-line-height-tight);
+  color: var(--slide-color-text);
+  margin-bottom: var(--slide-content-gap);
+}
+
+.slide h3 {
+  font-family: var(--slide-font-heading);
+  font-size: var(--slide-font-size-h3);
+  font-weight: var(--slide-font-weight-medium);
+  line-height: var(--slide-line-height-tight);
+  color: var(--slide-color-text-secondary);
+  margin-bottom: var(--slide-content-gap);
+}
+
+/* ============================================================================
+   文字樣式
+   ============================================================================ */
+
+.slide p {
+  margin-bottom: var(--slide-content-gap);
+  color: var(--slide-color-text);
+}
+
+.slide a {
+  color: var(--slide-color-primary);
+  text-decoration: none;
+}
+
+.slide a:hover {
+  text-decoration: underline;
+}
+
+.slide strong {
+  font-weight: var(--slide-font-weight-bold);
+}
+
+.slide em {
+  font-style: italic;
+}
+
+.slide small {
+  font-size: var(--slide-font-size-small);
+  color: var(--slide-color-text-muted);
+}
+
+/* ============================================================================
+   清單樣式
+   ============================================================================ */
+
+.slide ul,
+.slide ol {
+  margin-bottom: var(--slide-content-gap);
+  padding-left: 1.5em;
+}
+
+.slide li {
+  margin-bottom: 0.5em;
+  line-height: var(--slide-line-height-normal);
+}
+
+.slide ul > li {
+  list-style-type: disc;
+}
+
+.slide ol > li {
+  list-style-type: decimal;
+}
+
+.slide li::marker {
+  color: var(--slide-color-primary);
+}
+
+/* ============================================================================
+   程式碼樣式
+   ============================================================================ */
+
+.slide code {
+  font-family: var(--slide-font-mono);
+  font-size: var(--slide-font-size-code);
+  background: var(--slide-color-code-background);
+  color: var(--slide-color-code-foreground);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+}
+
+.slide pre {
+  font-family: var(--slide-font-mono);
+  font-size: var(--slide-font-size-code);
+  background: var(--slide-color-code-background);
+  color: var(--slide-color-code-foreground);
+  padding: 1em;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin-bottom: var(--slide-content-gap);
+}
+
+.slide pre code {
+  background: transparent;
+  padding: 0;
+}
+
+/* ============================================================================
+   引用樣式
+   ============================================================================ */
+
+.slide blockquote {
+  border-left: 4px solid var(--slide-color-primary);
+  padding-left: 1.5em;
+  margin-left: 0;
+  margin-bottom: var(--slide-content-gap);
+  font-style: italic;
+  color: var(--slide-color-text-secondary);
+}
+
+.slide blockquote p {
+  margin-bottom: 0.5em;
+}
+
+.slide blockquote cite {
+  display: block;
+  font-size: var(--slide-font-size-small);
+  color: var(--slide-color-text-muted);
+  margin-top: 0.5em;
+}
+
+/* ============================================================================
+   表格樣式
+   ============================================================================ */
+
+.slide table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--slide-content-gap);
+}
+
+.slide th,
+.slide td {
+  padding: 0.75em 1em;
+  text-align: left;
+  border-bottom: 1px solid var(--slide-color-background-secondary);
+}
+
+.slide th {
+  font-weight: var(--slide-font-weight-medium);
+  color: var(--slide-color-text);
+  background: var(--slide-color-background-secondary);
+}
+
+.slide td {
+  color: var(--slide-color-text-secondary);
+}
+
+.slide tr:hover td {
+  background: var(--slide-color-background-secondary);
+}
+
+/* ============================================================================
+   圖片樣式
+   ============================================================================ */
+
+.slide img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.slide figure {
+  margin: 0;
+  margin-bottom: var(--slide-content-gap);
+}
+
+.slide figcaption {
+  font-size: var(--slide-font-size-small);
+  color: var(--slide-color-text-muted);
+  text-align: center;
+  margin-top: 0.5em;
+}
+
+/* ============================================================================
+   分隔線樣式
+   ============================================================================ */
+
+.slide hr {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--slide-color-text-muted),
+    transparent
+  );
+  margin: var(--slide-section-gap) 0;
+}
+
+/* ============================================================================
+   狀態色彩輔助類
+   ============================================================================ */
+
+.slide .text-primary {
+  color: var(--slide-color-primary);
+}
+
+.slide .text-secondary {
+  color: var(--slide-color-secondary);
+}
+
+.slide .text-accent {
+  color: var(--slide-color-accent);
+}
+
+.slide .text-success {
+  color: var(--slide-color-success);
+}
+
+.slide .text-warning {
+  color: var(--slide-color-warning);
+}
+
+.slide .text-error {
+  color: var(--slide-color-error);
+}
+
+.slide .text-info {
+  color: var(--slide-color-info);
+}
+
+.slide .text-muted {
+  color: var(--slide-color-text-muted);
+}
+
+/* ============================================================================
+   背景色彩輔助類
+   ============================================================================ */
+
+.slide .bg-primary {
+  background-color: var(--slide-color-primary);
+  color: #ffffff;
+}
+
+.slide .bg-secondary {
+  background-color: var(--slide-color-background-secondary);
+}
+
+/* ============================================================================
+   主題模式標記
+   ============================================================================ */
+
+[data-theme-mode="dark"] .slide {
+  /* 深色模式下可能需要的額外調整 */
+}
+
+[data-theme-mode="light"] .slide {
+  /* 亮色模式下可能需要的額外調整 */
+}

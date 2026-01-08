@@ -1,0 +1,1086 @@
+/**
+ * NoteManager Styles
+ * Styles for note management sidebar and components
+ */
+
+/* ============================================================================
+   CSS Variables
+   ============================================================================ */
+
+:root {
+  /* Primary colors */
+  --nm-primary: #6366f1;
+  --nm-primary-hover: #4f46e5;
+  --nm-primary-light: rgba(99, 102, 241, 0.1);
+
+  /* Background colors */
+  --nm-bg-primary: #1a1a2e;
+  --nm-bg-secondary: #16162a;
+  --nm-bg-tertiary: #252545;
+  --nm-bg-hover: rgba(255, 255, 255, 0.05);
+  --nm-bg-active: rgba(99, 102, 241, 0.15);
+
+  /* Text colors */
+  --nm-text-primary: #e0e0e0;
+  --nm-text-secondary: #9ca3af;
+  --nm-text-muted: #6b7280;
+
+  /* Border colors */
+  --nm-border: #2a2a4e;
+  --nm-border-light: rgba(255, 255, 255, 0.1);
+
+  /* Status colors */
+  --nm-success: #10b981;
+  --nm-warning: #f59e0b;
+  --nm-danger: #ef4444;
+
+  /* Transitions */
+  --nm-transition-fast: 150ms ease;
+  --nm-transition-normal: 250ms ease;
+
+  /* Shadows */
+  --nm-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --nm-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --nm-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================================================
+   Sidebar Layout
+   ============================================================================ */
+
+.note-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: var(--nm-bg-primary);
+  border-right: 1px solid var(--nm-border);
+  position: relative;
+  user-select: none;
+}
+
+.sidebar-collapsed {
+  width: 48px;
+  height: 100%;
+  background-color: var(--nm-bg-primary);
+  border-right: 1px solid var(--nm-border);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 12px;
+}
+
+.sidebar-expand-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 6px;
+  background-color: transparent;
+  color: var(--nm-text-secondary);
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.sidebar-expand-btn:hover {
+  background-color: var(--nm-bg-hover);
+  color: var(--nm-text-primary);
+}
+
+/* ============================================================================
+   Sidebar Header
+   ============================================================================ */
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px 8px;
+  border-bottom: 1px solid var(--nm-border);
+}
+
+.sidebar-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--nm-text-primary);
+}
+
+.sidebar-title svg {
+  color: var(--nm-primary);
+}
+
+.sidebar-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.sidebar-action-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 4px;
+  background-color: transparent;
+  color: var(--nm-text-secondary);
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.sidebar-action-btn:hover {
+  background-color: var(--nm-bg-hover);
+  color: var(--nm-text-primary);
+}
+
+/* ============================================================================
+   Search Bar
+   ============================================================================ */
+
+.sidebar-search {
+  padding: 8px 12px;
+}
+
+.search-bar-container {
+  position: relative;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background-color: var(--nm-bg-secondary);
+  border: 1px solid var(--nm-border);
+  border-radius: 6px;
+  transition: all var(--nm-transition-fast);
+}
+
+.search-bar:focus-within {
+  border-color: var(--nm-primary);
+  box-shadow: 0 0 0 2px var(--nm-primary-light);
+}
+
+.search-bar-icon {
+  color: var(--nm-text-muted);
+  flex-shrink: 0;
+}
+
+.search-bar-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  color: var(--nm-text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.search-bar-input::placeholder {
+  color: var(--nm-text-muted);
+}
+
+.search-bar-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--nm-bg-tertiary);
+  color: var(--nm-text-secondary);
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.search-bar-clear:hover {
+  background-color: var(--nm-border);
+  color: var(--nm-text-primary);
+}
+
+/* Search Results */
+.search-results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  margin-top: 4px;
+  background-color: var(--nm-bg-secondary);
+  border: 1px solid var(--nm-border);
+  border-radius: 6px;
+  box-shadow: var(--nm-shadow-lg);
+  max-height: 400px;
+  overflow-y: auto;
+  z-index: 100;
+}
+
+.search-result-item {
+  display: flex;
+  gap: 10px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background-color var(--nm-transition-fast);
+}
+
+.search-result-item:hover,
+.search-result-item.selected {
+  background-color: var(--nm-bg-active);
+}
+
+.search-result-icon {
+  flex-shrink: 0;
+  color: var(--nm-text-muted);
+}
+
+.search-result-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.search-result-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--nm-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.search-result-preview {
+  font-size: 12px;
+  color: var(--nm-text-muted);
+  margin-top: 2px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.search-highlight {
+  background-color: rgba(234, 179, 8, 0.3);
+  color: var(--nm-text-primary);
+  padding: 0 2px;
+  border-radius: 2px;
+}
+
+.search-no-results,
+.search-empty {
+  padding: 20px;
+  text-align: center;
+  color: var(--nm-text-muted);
+  font-size: 13px;
+}
+
+/* Search History */
+.search-history {
+  border-top: 1px solid var(--nm-border);
+}
+
+.search-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--nm-text-muted);
+}
+
+.search-history-clear {
+  border: none;
+  background: transparent;
+  color: var(--nm-primary);
+  font-size: 11px;
+  cursor: pointer;
+  text-transform: none;
+}
+
+.search-history-clear:hover {
+  text-decoration: underline;
+}
+
+.search-history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  color: var(--nm-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color var(--nm-transition-fast);
+}
+
+.search-history-item:hover {
+  background-color: var(--nm-bg-hover);
+  color: var(--nm-text-primary);
+}
+
+/* ============================================================================
+   Tabs
+   ============================================================================ */
+
+.sidebar-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--nm-border);
+}
+
+.sidebar-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border: none;
+  border-radius: 4px;
+  background-color: transparent;
+  color: var(--nm-text-secondary);
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.sidebar-tab:hover {
+  background-color: var(--nm-bg-hover);
+  color: var(--nm-text-primary);
+}
+
+.sidebar-tab.active {
+  background-color: var(--nm-bg-active);
+  color: var(--nm-primary);
+}
+
+/* ============================================================================
+   Sidebar Content
+   ============================================================================ */
+
+.sidebar-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.sidebar-panel {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* ============================================================================
+   Folder Tree
+   ============================================================================ */
+
+.folder-tree {
+  padding: 8px 0;
+}
+
+.tree-item-container {
+  position: relative;
+}
+
+.tree-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background-color var(--nm-transition-fast);
+  font-size: 13px;
+  color: var(--nm-text-secondary);
+  border-radius: 4px;
+  margin: 1px 8px;
+}
+
+.tree-item:hover {
+  background-color: var(--nm-bg-hover);
+  color: var(--nm-text-primary);
+}
+
+.tree-item.selected {
+  background-color: var(--nm-bg-active);
+  color: var(--nm-text-primary);
+}
+
+.tree-item.drag-over {
+  background-color: var(--nm-primary-light);
+  border: 1px dashed var(--nm-primary);
+  margin: 0 7px;
+}
+
+.tree-item:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--nm-primary-light);
+}
+
+.tree-chevron-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.tree-chevron {
+  transition: transform var(--nm-transition-fast);
+}
+
+.tree-chevron.open {
+  transform: rotate(90deg);
+}
+
+.tree-icon {
+  flex-shrink: 0;
+  color: var(--nm-text-muted);
+}
+
+.folder-icon {
+  color: #f59e0b;
+}
+
+.note-icon {
+  color: #6366f1;
+}
+
+.tree-item-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tree-rename-input {
+  flex: 1;
+  padding: 2px 4px;
+  border: 1px solid var(--nm-primary);
+  border-radius: 3px;
+  background-color: var(--nm-bg-secondary);
+  color: var(--nm-text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.tree-children {
+  overflow: hidden;
+}
+
+/* ============================================================================
+   Note Card
+   ============================================================================ */
+
+.note-card {
+  padding: 12px;
+  margin: 4px 8px;
+  background-color: var(--nm-bg-secondary);
+  border: 1px solid var(--nm-border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.note-card:hover {
+  border-color: var(--nm-border-light);
+  background-color: var(--nm-bg-tertiary);
+}
+
+.note-card.selected {
+  border-color: var(--nm-primary);
+  background-color: var(--nm-bg-active);
+}
+
+.note-card:focus {
+  outline: none;
+  border-color: var(--nm-primary);
+  box-shadow: 0 0 0 2px var(--nm-primary-light);
+}
+
+.note-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.note-card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--nm-text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.note-card-time {
+  font-size: 11px;
+  color: var(--nm-text-muted);
+  flex-shrink: 0;
+}
+
+.note-card-summary {
+  font-size: 12px;
+  color: var(--nm-text-muted);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+.note-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.note-card-tag {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid;
+}
+
+.note-card-tag-more {
+  font-size: 10px;
+  padding: 2px 6px;
+  color: var(--nm-text-muted);
+}
+
+.note-card-indicators {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.note-card-indicator {
+  color: var(--nm-text-muted);
+}
+
+/* ============================================================================
+   Tag Filter
+   ============================================================================ */
+
+.tag-filter {
+  padding: 8px;
+}
+
+.tag-filter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+}
+
+.tag-filter-title {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--nm-text-muted);
+  margin: 0;
+}
+
+.tag-filter-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.tag-filter-clear {
+  font-size: 11px;
+  border: none;
+  background: transparent;
+  color: var(--nm-primary);
+  cursor: pointer;
+}
+
+.tag-filter-clear:hover {
+  text-decoration: underline;
+}
+
+.tag-filter-add {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 4px;
+  background-color: var(--nm-bg-tertiary);
+  color: var(--nm-text-secondary);
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.tag-filter-add:hover {
+  background-color: var(--nm-primary);
+  color: white;
+}
+
+.tag-filter-search {
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.tag-filter-search-input {
+  width: 100%;
+  padding: 6px 28px 6px 10px;
+  border: 1px solid var(--nm-border);
+  border-radius: 4px;
+  background-color: var(--nm-bg-secondary);
+  color: var(--nm-text-primary);
+  font-size: 12px;
+  outline: none;
+}
+
+.tag-filter-search-input:focus {
+  border-color: var(--nm-primary);
+}
+
+.tag-filter-search-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: var(--nm-text-muted);
+  cursor: pointer;
+  padding: 2px;
+}
+
+.tag-filter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tag-filter-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.tag-filter-item:hover {
+  background-color: var(--nm-bg-hover);
+}
+
+.tag-filter-item.selected {
+  background-color: var(--nm-bg-active);
+}
+
+.tag-filter-item:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--nm-primary-light);
+}
+
+.tag-filter-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.tag-filter-name {
+  flex: 1;
+  font-size: 13px;
+  color: var(--nm-text-primary);
+}
+
+.tag-filter-count {
+  font-size: 11px;
+  color: var(--nm-text-muted);
+  background-color: var(--nm-bg-tertiary);
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.tag-filter-check {
+  color: var(--nm-primary);
+}
+
+.tag-filter-empty {
+  text-align: center;
+  padding: 20px;
+  color: var(--nm-text-muted);
+  font-size: 13px;
+}
+
+/* Create Tag Dialog */
+.tag-create-dialog {
+  padding: 12px;
+  background-color: var(--nm-bg-secondary);
+  border: 1px solid var(--nm-border);
+  border-radius: 8px;
+  margin-top: 8px;
+}
+
+.tag-create-input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--nm-border);
+  border-radius: 4px;
+  background-color: var(--nm-bg-primary);
+  color: var(--nm-text-primary);
+  font-size: 13px;
+  outline: none;
+  margin-bottom: 10px;
+}
+
+.tag-create-input:focus {
+  border-color: var(--nm-primary);
+}
+
+.tag-create-colors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.tag-color-btn {
+  width: 24px;
+  height: 24px;
+  border: 2px solid transparent;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.tag-color-btn:hover {
+  transform: scale(1.1);
+}
+
+.tag-color-btn.selected {
+  border-color: white;
+  box-shadow: 0 0 0 2px var(--nm-bg-primary);
+}
+
+.tag-create-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.tag-create-cancel,
+.tag-create-submit {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.tag-create-cancel {
+  background-color: transparent;
+  color: var(--nm-text-secondary);
+}
+
+.tag-create-cancel:hover {
+  color: var(--nm-text-primary);
+}
+
+.tag-create-submit {
+  background-color: var(--nm-primary);
+  color: white;
+}
+
+.tag-create-submit:hover:not(:disabled) {
+  background-color: var(--nm-primary-hover);
+}
+
+.tag-create-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================================================
+   Note List
+   ============================================================================ */
+
+.note-list {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.note-list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--nm-border);
+}
+
+.note-list-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.note-list-count {
+  font-size: 12px;
+  color: var(--nm-text-secondary);
+}
+
+.note-list-filter-desc {
+  font-size: 10px;
+  color: var(--nm-text-muted);
+}
+
+.note-list-sort {
+  position: relative;
+}
+
+.note-list-sort-button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--nm-border);
+  border-radius: 4px;
+  background-color: var(--nm-bg-secondary);
+  color: var(--nm-text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.note-list-sort-button:hover {
+  border-color: var(--nm-border-light);
+  color: var(--nm-text-primary);
+}
+
+.sort-chevron {
+  transition: transform var(--nm-transition-fast);
+}
+
+.sort-chevron.open {
+  transform: rotate(180deg);
+}
+
+.note-list-sort-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 4px;
+  min-width: 160px;
+  background-color: var(--nm-bg-secondary);
+  border: 1px solid var(--nm-border);
+  border-radius: 6px;
+  box-shadow: var(--nm-shadow-md);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.sort-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--nm-text-secondary);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--nm-transition-fast);
+}
+
+.sort-option:hover {
+  background-color: var(--nm-bg-hover);
+  color: var(--nm-text-primary);
+}
+
+.sort-option.selected {
+  color: var(--nm-primary);
+}
+
+.note-list-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.note-list-virtual {
+  position: relative;
+}
+
+.note-list-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.empty-icon {
+  color: var(--nm-text-muted);
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-text {
+  font-size: 14px;
+  color: var(--nm-text-secondary);
+  margin: 0 0 8px;
+}
+
+.empty-hint {
+  font-size: 12px;
+  color: var(--nm-text-muted);
+  margin: 0;
+}
+
+/* ============================================================================
+   Context Menu
+   ============================================================================ */
+
+.context-menu {
+  position: fixed;
+  min-width: 160px;
+  background-color: var(--nm-bg-secondary);
+  border: 1px solid var(--nm-border);
+  border-radius: 6px;
+  box-shadow: var(--nm-shadow-lg);
+  z-index: 1000;
+  padding: 4px 0;
+}
+
+.context-menu-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--nm-text-primary);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color var(--nm-transition-fast);
+}
+
+.context-menu-item:hover:not(:disabled) {
+  background-color: var(--nm-bg-active);
+}
+
+.context-menu-item.danger {
+  color: var(--nm-danger);
+}
+
+.context-menu-item.danger:hover:not(:disabled) {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.context-menu-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.context-menu-label {
+  flex: 1;
+}
+
+.context-menu-shortcut {
+  font-size: 11px;
+  color: var(--nm-text-muted);
+  margin-left: 16px;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background-color: var(--nm-border);
+  margin: 4px 0;
+}
+
+/* ============================================================================
+   Resize Handle
+   ============================================================================ */
+
+.sidebar-resize-handle {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  cursor: ew-resize;
+  background-color: transparent;
+  transition: background-color var(--nm-transition-fast);
+  z-index: 10;
+}
+
+.sidebar-resize-handle:hover,
+.sidebar-resize-handle.active {
+  background-color: var(--nm-primary);
+}
+
+/* ============================================================================
+   Scrollbar Styles
+   ============================================================================ */
+
+.sidebar-content::-webkit-scrollbar,
+.sidebar-panel::-webkit-scrollbar,
+.note-list-content::-webkit-scrollbar,
+.search-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar-content::-webkit-scrollbar-track,
+.sidebar-panel::-webkit-scrollbar-track,
+.note-list-content::-webkit-scrollbar-track,
+.search-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb,
+.sidebar-panel::-webkit-scrollbar-thumb,
+.note-list-content::-webkit-scrollbar-thumb,
+.search-results::-webkit-scrollbar-thumb {
+  background-color: var(--nm-border);
+  border-radius: 3px;
+}
+
+.sidebar-content::-webkit-scrollbar-thumb:hover,
+.sidebar-panel::-webkit-scrollbar-thumb:hover,
+.note-list-content::-webkit-scrollbar-thumb:hover,
+.search-results::-webkit-scrollbar-thumb:hover {
+  background-color: var(--nm-text-muted);
+}
+
+/* ============================================================================
+   Accessibility
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus visible for keyboard navigation */
+.tree-item:focus-visible,
+.note-card:focus-visible,
+.tag-filter-item:focus-visible,
+.sidebar-tab:focus-visible,
+.sidebar-action-btn:focus-visible {
+  outline: 2px solid var(--nm-primary);
+  outline-offset: 2px;
+}
