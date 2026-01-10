@@ -5,6 +5,7 @@ import { PagePanel } from './components/PagePanel';
 import { NotesPanel } from './components/NotesPanel';
 import { CameraBubble } from './components/Recorder/CameraBubble';
 import { useRecorder } from './components/Recorder/useRecorder';
+import { ScreenRecorder } from './components/ScreenRecorder';
 import { useProjectStore } from './stores/projectStore';
 import { usePageStore } from './stores/pageStore';
 import { SlidePlayer } from './components/Slides';
@@ -45,6 +46,9 @@ function App() {
   const [isSlideMode, setIsSlideMode] = useState(false);
   const [isSlideEditorOpen, setIsSlideEditorOpen] = useState(false);
   const [markdownContent, setMarkdownContent] = useState(DEFAULT_MARKDOWN);
+
+  // Screen recording state
+  const [isScreenRecorderOpen, setIsScreenRecorderOpen] = useState(false);
   const presentation = useSlideStore((state) => state.presentation);
   const theme = useSlideStore((state) => state.theme);
   const parseFromMarkdown = useSlideStore((state) => state.parseFromMarkdown);
@@ -220,6 +224,12 @@ function App() {
           <button className="header-btn header-btn--slides" onClick={handleOpenSlides}>
             📊 簡報
           </button>
+          <button
+            className="header-btn header-btn--screen-record"
+            onClick={() => setIsScreenRecorderOpen(true)}
+          >
+            🎬 螢幕錄影
+          </button>
         </div>
         <div className="app-status">
           <span className="page-indicator">
@@ -315,6 +325,28 @@ function App() {
             theme={theme}
             showControls={true}
             onExit={handleCloseSlides}
+          />
+        </div>
+      )}
+
+      {/* Screen Recorder */}
+      {isScreenRecorderOpen && (
+        <div className="screen-recorder-overlay">
+          <div className="screen-recorder-close-btn" onClick={() => setIsScreenRecorderOpen(false)}>
+            ✕
+          </div>
+          <ScreenRecorder
+            onRecordingComplete={(blob) => {
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `screen-recording-${Date.now()}.webm`;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+              setIsScreenRecorderOpen(false);
+            }}
           />
         </div>
       )}
