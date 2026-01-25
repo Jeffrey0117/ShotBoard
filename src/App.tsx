@@ -6,6 +6,7 @@ import { NotesPanel } from './components/NotesPanel';
 import { CameraBubble } from './components/Recorder/CameraBubble';
 import { useRecorder } from './components/Recorder/useRecorder';
 import { ScreenRecorder } from './components/ScreenRecorder';
+import { ScreenMonitor } from './components/ScreenMonitor';
 import { useProjectStore } from './stores/projectStore';
 import { usePageStore } from './stores/pageStore';
 import { SlidePlayer } from './components/Slides';
@@ -49,6 +50,7 @@ function App() {
 
   // Screen recording state
   const [isScreenRecorderOpen, setIsScreenRecorderOpen] = useState(false);
+  const [isScreenMonitorOpen, setIsScreenMonitorOpen] = useState(false);
   const presentation = useSlideStore((state) => state.presentation);
   const theme = useSlideStore((state) => state.theme);
   const parseFromMarkdown = useSlideStore((state) => state.parseFromMarkdown);
@@ -230,6 +232,12 @@ function App() {
           >
             🎬 螢幕錄影
           </button>
+          <button
+            className="header-btn header-btn--screen-monitor"
+            onClick={() => setIsScreenMonitorOpen(true)}
+          >
+            📷 螢幕監控
+          </button>
         </div>
         <div className="app-status">
           <span className="page-indicator">
@@ -349,6 +357,11 @@ function App() {
             }}
           />
         </div>
+      )}
+
+      {/* Screen Monitor */}
+      {isScreenMonitorOpen && (
+        <ScreenMonitor onClose={() => setIsScreenMonitorOpen(false)} />
       )}
     </div>
   );
