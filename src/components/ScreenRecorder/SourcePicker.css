@@ -1,97 +1,99 @@
+/* ============================================
+   Source Picker - Minimalist Monochrome
+   ============================================ */
+
 .source-picker-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 10000;
-  backdrop-filter: blur(4px);
 }
 
 .source-picker-modal {
-  background: #1e1e2e;
-  border-radius: 12px;
+  background: var(--background);
+  border: 2px solid var(--foreground);
   width: 90%;
-  max-width: 720px;
+  max-width: 760px;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .source-picker-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 24px;
+  border-bottom: 2px solid var(--foreground);
 }
 
 .source-picker-header h2 {
   margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--foreground);
 }
 
 .close-button {
-  background: none;
-  border: none;
-  font-size: 24px;
-  color: #888;
+  background: transparent;
+  border: 2px solid var(--foreground);
+  font-size: 18px;
+  color: var(--foreground);
   cursor: pointer;
   padding: 0;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  transition: all 0.2s;
+  transition: all 100ms;
 }
 
 .close-button:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: var(--foreground);
+  color: var(--background);
 }
 
 /* Tabs */
 .source-picker-tabs {
   display: flex;
-  gap: 8px;
-  padding: 12px 20px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 10px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border-light);
 }
 
 .tab-button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 20px;
+  gap: 10px;
+  padding: 12px 24px;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  color: #aaa;
-  font-size: 14px;
+  border: 2px solid var(--border-light);
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 100ms;
 }
 
 .tab-button:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
+  border-color: var(--foreground);
+  color: var(--foreground);
 }
 
 .tab-button.active {
-  background: rgba(99, 102, 241, 0.2);
-  border-color: #6366f1;
-  color: #fff;
+  background: var(--foreground);
+  border-color: var(--foreground);
+  color: var(--background);
 }
 
 .tab-icon {
@@ -102,7 +104,7 @@
 .source-picker-content {
   flex: 1;
   overflow-y: auto;
-  padding: 20px;
+  padding: 24px;
   min-height: 300px;
 }
 
@@ -112,42 +114,41 @@
   align-items: center;
   justify-content: center;
   height: 200px;
-  color: #888;
-  font-size: 14px;
+  color: var(--muted-foreground);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
 }
 
 /* Source Grid */
 .source-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
+  gap: 20px;
 }
 
 .source-item {
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid transparent;
-  border-radius: 10px;
-  padding: 8px;
+  background: var(--muted);
+  border: 2px solid var(--border-light);
+  padding: 10px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 100ms;
 }
 
 .source-item:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--foreground);
 }
 
 .source-item.selected {
-  border-color: #6366f1;
-  background: rgba(99, 102, 241, 0.15);
+  border-color: var(--foreground);
+  border-width: 3px;
+  background: var(--background);
 }
 
 .source-thumbnail {
   width: 100%;
   aspect-ratio: 16 / 9;
-  border-radius: 6px;
   overflow: hidden;
-  background: #000;
+  background: var(--foreground);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -160,15 +161,16 @@
 }
 
 .no-thumbnail {
-  font-size: 48px;
+  font-size: 36px;
   opacity: 0.5;
+  color: var(--background);
 }
 
 .source-info {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 8px;
+  gap: 10px;
+  margin-top: 10px;
   padding: 0 4px;
 }
 
@@ -179,8 +181,9 @@
 }
 
 .source-name {
-  font-size: 12px;
-  color: #ccc;
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--foreground);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -194,48 +197,68 @@
   justify-content: center;
   height: 200px;
   text-align: center;
-  color: #aaa;
+  color: var(--muted-foreground);
 }
 
 .region-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
-  opacity: 0.7;
+  font-size: 48px;
+  margin-bottom: 20px;
+  opacity: 0.6;
 }
 
 .region-info p {
-  margin: 4px 0;
-  font-size: 14px;
+  margin: 6px 0;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
 }
 
 .region-hint {
-  color: #666;
-  font-size: 12px !important;
-  margin-top: 12px !important;
+  color: var(--muted-foreground);
+  font-size: 0.75rem !important;
+  font-style: italic;
+  margin-top: 16px !important;
 }
 
 /* Options */
 .source-picker-options {
   display: flex;
-  gap: 24px;
-  padding: 12px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 28px;
+  padding: 16px 24px;
+  border-top: 1px solid var(--border-light);
 }
 
 .option-checkbox {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: #aaa;
-  font-size: 13px;
+  gap: 10px;
+  color: var(--foreground);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
   cursor: pointer;
 }
 
 .option-checkbox input[type="checkbox"] {
+  appearance: none;
   width: 16px;
   height: 16px;
-  accent-color: #6366f1;
+  border: 2px solid var(--foreground);
   cursor: pointer;
+  position: relative;
+}
+
+.option-checkbox input[type="checkbox"]:checked {
+  background: var(--foreground);
+}
+
+.option-checkbox input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--background);
+  font-size: 10px;
+  font-weight: bold;
 }
 
 /* Footer */
@@ -243,43 +266,62 @@
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  padding: 16px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 20px 24px;
+  border-top: 2px solid var(--foreground);
 }
 
 .cancel-button,
 .confirm-button {
-  padding: 10px 24px;
-  border-radius: 8px;
-  font-size: 14px;
+  padding: 12px 28px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 100ms;
 }
 
 .cancel-button {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #aaa;
+  border: 2px solid var(--border-light);
+  color: var(--muted-foreground);
 }
 
 .cancel-button:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.3);
-  color: #fff;
+  border-color: var(--foreground);
+  color: var(--foreground);
 }
 
 .confirm-button {
-  background: #6366f1;
-  border: none;
-  color: #fff;
+  background: var(--foreground);
+  border: 2px solid var(--foreground);
+  color: var(--background);
 }
 
 .confirm-button:hover:not(:disabled) {
-  background: #5558e3;
+  background: transparent;
+  color: var(--foreground);
 }
 
 .confirm-button:disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
+}
+
+/* Scrollbar */
+.source-picker-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.source-picker-content::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+.source-picker-content::-webkit-scrollbar-thumb {
+  background: var(--foreground);
+}
+
+.source-picker-content::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
 }

@@ -60,7 +60,7 @@ function App() {
   const [isScreenRecorderOpen, setIsScreenRecorderOpen] = useState(false);
   const [isScreenMonitorOpen, setIsScreenMonitorOpen] = useState(false);
   const presentation = useSlideStore((state) => state.presentation);
-  const theme = useSlideStore((state) => state.theme);
+  const slideTheme = useSlideStore((state) => state.theme);
   const parseFromMarkdown = useSlideStore((state) => state.parseFromMarkdown);
 
   // Page store - must be before handlers that use them
@@ -339,7 +339,7 @@ function App() {
         <div className="slide-mode-container">
           <SlidePlayer
             presentation={presentation}
-            theme={theme}
+            theme={slideTheme}
             showControls={true}
             onExit={handleCloseSlides}
           />

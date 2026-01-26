@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './styles.css';
 
 interface ToolbarProps {
   isPreviewing: boolean;
@@ -43,36 +44,32 @@ export const Toolbar: React.FC<ToolbarProps> = ({
   };
 
   return (
-    <div style={styles.container}>
+    <div className="recording-toolbar">
       {!isPreviewing ? (
-        <button style={styles.button} onClick={onStartPreview}>
-          📷 Start Preview
+        <button className="recording-toolbar-btn" onClick={onStartPreview}>
+          Start Preview
         </button>
       ) : (
         <>
           {!isRecording ? (
             <button
-              style={{ ...styles.button, ...styles.recordButton }}
+              className="recording-toolbar-btn recording-toolbar-btn--record"
               onClick={onStartRecording}
             >
-              🔴 Start Recording
+              Start Recording
             </button>
           ) : (
             <button
-              style={{ ...styles.button, ...styles.stopButton }}
+              className="recording-toolbar-btn recording-toolbar-btn--stop"
               onClick={onStopRecording}
             >
-              <span style={styles.recordingDot} />
-              <span style={styles.timerText}>{formatTime(elapsed)}</span>
+              <span className="recording-dot" />
+              <span className="recording-timer">{formatTime(elapsed)}</span>
               <span>Stop</span>
             </button>
           )}
           <button
-            style={{
-              ...styles.button,
-              ...styles.cancelButton,
-              ...(isRecording ? styles.disabled : {}),
-            }}
+            className={`recording-toolbar-btn recording-toolbar-btn--cancel ${isRecording ? 'disabled' : ''}`}
             onClick={stopPreview}
             disabled={isRecording}
           >
@@ -89,75 +86,3 @@ export const Toolbar: React.FC<ToolbarProps> = ({
     }
   }
 };
-
-const styles: Record<string, React.CSSProperties> = {
-  container: {
-    position: 'fixed',
-    bottom: 20,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    display: 'flex',
-    gap: 12,
-    padding: '12px 20px',
-    backgroundColor: 'rgba(0, 0, 0, 0.85)',
-    borderRadius: 12,
-    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-    zIndex: 10000,
-  },
-  button: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    padding: '10px 20px',
-    fontSize: 14,
-    fontWeight: 600,
-    color: '#fff',
-    backgroundColor: '#4a4a4a',
-    border: 'none',
-    borderRadius: 8,
-    cursor: 'pointer',
-    transition: 'background-color 0.2s',
-  },
-  recordButton: {
-    backgroundColor: '#e53935',
-  },
-  stopButton: {
-    backgroundColor: '#e53935',
-    minWidth: 160,
-  },
-  cancelButton: {
-    backgroundColor: '#666',
-  },
-  disabled: {
-    opacity: 0.5,
-    cursor: 'not-allowed',
-  },
-  recordingDot: {
-    width: 10,
-    height: 10,
-    backgroundColor: '#fff',
-    borderRadius: '50%',
-    animation: 'pulse 1s ease-in-out infinite',
-  },
-  timerText: {
-    fontFamily: 'monospace',
-    fontWeight: 'bold',
-    minWidth: 50,
-  },
-};
-
-// Add keyframes for pulse animation
-if (typeof document !== 'undefined') {
-  const existingStyle = document.getElementById('toolbar-keyframes');
-  if (!existingStyle) {
-    const styleSheet = document.createElement('style');
-    styleSheet.id = 'toolbar-keyframes';
-    styleSheet.textContent = `
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.4; }
-      }
-    `;
-    document.head.appendChild(styleSheet);
-  }
-}

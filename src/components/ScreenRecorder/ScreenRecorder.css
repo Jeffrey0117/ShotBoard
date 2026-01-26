@@ -1,69 +1,76 @@
+/* ============================================
+   Screen Recorder - Minimalist Monochrome
+   ============================================ */
+
 .screen-recorder {
   position: relative;
 }
 
 .screen-recorder-panel {
-  background: #1e1e2e;
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--background);
+  border: 2px solid var(--foreground);
   overflow: hidden;
-  width: 320px;
+  width: 340px;
 }
 
 .panel-header {
-  padding: 12px 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px 20px;
+  border-bottom: 2px solid var(--foreground);
 }
 
 .panel-header h3 {
   margin: 0;
-  font-size: 14px;
-  font-weight: 600;
-  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.125rem;
+  font-weight: 500;
+  color: var(--foreground);
 }
 
 .panel-content {
-  padding: 16px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 
 /* Source Section */
 .source-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .source-section label {
-  font-size: 12px;
-  color: #888;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted-foreground);
   font-weight: 500;
 }
 
 .source-select-button {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: #fff;
-  font-size: 13px;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--muted);
+  border: 2px solid var(--border-light);
+  color: var(--foreground);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 100ms;
   text-align: left;
 }
 
 .source-select-button:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: var(--foreground);
+  background: var(--background);
 }
 
 .source-select-button:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -82,41 +89,62 @@
 .audio-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .audio-section > label {
-  font-size: 12px;
-  color: #888;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted-foreground);
   font-weight: 500;
 }
 
 .audio-options {
   display: flex;
-  gap: 16px;
+  gap: 20px;
 }
 
 .audio-checkbox {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
-  color: #ccc;
+  gap: 8px;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--foreground);
   cursor: pointer;
 }
 
 .audio-checkbox input[type="checkbox"] {
-  width: 14px;
-  height: 14px;
-  accent-color: #6366f1;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--foreground);
   cursor: pointer;
+  position: relative;
+}
+
+.audio-checkbox input[type="checkbox"]:checked {
+  background: var(--foreground);
+}
+
+.audio-checkbox input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--background);
+  font-size: 10px;
+  font-weight: bold;
 }
 
 .volume-control {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 4px;
+  gap: 10px;
+  margin-top: 8px;
 }
 
 .volume-control span {
@@ -126,49 +154,57 @@
 
 .volume-control input[type="range"] {
   flex: 1;
-  height: 4px;
-  accent-color: #6366f1;
+  height: 2px;
+  background: var(--border-light);
+  appearance: none;
   cursor: pointer;
+}
+
+.volume-control input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: var(--foreground);
 }
 
 /* Recording Status */
 .recording-status {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  background: rgba(229, 57, 53, 0.15);
-  border-radius: 8px;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--muted);
+  border: 2px solid var(--foreground);
 }
 
 .recording-indicator {
-  width: 10px;
-  height: 10px;
-  background: #e53935;
-  border-radius: 50%;
-  animation: pulse 1s ease-in-out infinite;
+  width: 8px;
+  height: 8px;
+  background: var(--foreground);
+  animation: pulse-mono 1.5s ease-in-out infinite;
 }
 
-@keyframes pulse {
+@keyframes pulse-mono {
   0%, 100% {
     opacity: 1;
   }
   50% {
-    opacity: 0.5;
+    opacity: 0.4;
   }
 }
 
 .recording-time {
-  font-family: 'SF Mono', Monaco, monospace;
-  font-size: 16px;
-  font-weight: 600;
-  color: #e53935;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--foreground);
 }
 
 /* Control Buttons */
 .control-buttons {
   display: flex;
-  gap: 8px;
+  gap: 10px;
 }
 
 .control-button {
@@ -176,90 +212,100 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 10px 16px;
-  border: none;
-  border-radius: 8px;
-  font-size: 13px;
+  gap: 8px;
+  padding: 12px 20px;
+  border: 2px solid var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 100ms;
 }
 
 .control-button.preview {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: transparent;
+  color: var(--foreground);
 }
 
 .control-button.preview:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--foreground);
+  color: var(--background);
 }
 
 .control-button.start {
-  background: #e53935;
-  color: #fff;
+  background: var(--foreground);
+  color: var(--background);
 }
 
 .control-button.start:hover {
-  background: #d32f2f;
+  background: transparent;
+  color: var(--foreground);
 }
 
 .control-button.pause {
-  background: #ff9800;
-  color: #fff;
+  background: var(--foreground);
+  color: var(--background);
 }
 
 .control-button.pause:hover {
-  background: #f57c00;
+  background: transparent;
+  color: var(--foreground);
 }
 
 .control-button.resume {
-  background: #4caf50;
-  color: #fff;
+  background: var(--foreground);
+  color: var(--background);
 }
 
 .control-button.resume:hover {
-  background: #43a047;
+  background: transparent;
+  color: var(--foreground);
 }
 
 .control-button.stop {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  background: transparent;
+  color: var(--foreground);
 }
 
 .control-button.stop:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: var(--foreground);
+  color: var(--background);
 }
 
 .control-button:disabled {
-  opacity: 0.5;
+  opacity: 0.3;
   cursor: not-allowed;
+}
+
+.control-button:disabled:hover {
+  background: transparent;
+  color: var(--foreground);
 }
 
 /* Floating Recording Controls */
 .floating-controls {
   position: fixed;
-  top: 20px;
+  top: 24px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 8px 16px;
-  background: rgba(30, 30, 46, 0.95);
-  border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(10px);
+  gap: 20px;
+  padding: 12px 20px;
+  background: var(--background);
+  border: 2px solid var(--foreground);
   z-index: 9999;
 }
 
 .floating-controls .recording-status {
   background: transparent;
+  border: none;
   padding: 0;
 }
 
 .floating-controls .control-button {
-  padding: 8px 12px;
-  font-size: 12px;
+  padding: 8px 16px;
+  font-size: 0.7rem;
 }

@@ -1,0 +1,110 @@
+/* ============================================
+   Toolbar - Minimalist Monochrome
+   ============================================ */
+
+.recording-toolbar {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  padding: 16px 24px;
+  background: var(--background);
+  border: 2px solid var(--foreground);
+  z-index: 10000;
+}
+
+.recording-toolbar-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--foreground);
+  background: transparent;
+  border: 2px solid var(--foreground);
+  cursor: pointer;
+  transition: all 100ms;
+}
+
+.recording-toolbar-btn:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.recording-toolbar-btn:focus-visible {
+  outline: 3px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+.recording-toolbar-btn--record {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.recording-toolbar-btn--record:hover {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.recording-toolbar-btn--stop {
+  background: var(--foreground);
+  color: var(--background);
+  min-width: 180px;
+  justify-content: center;
+}
+
+.recording-toolbar-btn--stop:hover {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.recording-toolbar-btn--cancel {
+  background: transparent;
+  color: var(--muted-foreground);
+  border-color: var(--muted-foreground);
+}
+
+.recording-toolbar-btn--cancel:hover {
+  background: var(--muted-foreground);
+  color: var(--background);
+}
+
+.recording-toolbar-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.recording-toolbar-btn:disabled:hover {
+  background: transparent;
+  color: var(--foreground);
+}
+
+/* Recording indicator */
+.recording-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--background);
+  animation: pulse-mono 1.5s ease-in-out infinite;
+}
+
+.recording-toolbar-btn--stop:hover .recording-dot {
+  background: var(--foreground);
+}
+
+.recording-timer {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  min-width: 50px;
+  letter-spacing: 0.05em;
+}
+
+@keyframes pulse-mono {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}

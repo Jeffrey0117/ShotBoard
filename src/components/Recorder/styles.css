@@ -1,0 +1,103 @@
+/* ============================================
+   Camera Bubble - Minimalist Monochrome
+   ============================================ */
+
+.camera-bubble-container {
+  position: fixed;
+  z-index: 99999;
+}
+
+.camera-bubble-toolbar {
+  display: flex;
+  gap: 4px;
+  padding: 6px 10px;
+  margin-bottom: 6px;
+  background: var(--background);
+  border: 2px solid var(--foreground);
+  width: fit-content;
+}
+
+.camera-bubble-divider {
+  width: 1px;
+  background: var(--border-light);
+  margin: 4px 6px;
+}
+
+.camera-shape-btn {
+  width: 32px;
+  height: 32px;
+  border: 2px solid transparent;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 100ms;
+}
+
+.camera-shape-btn:hover {
+  color: var(--foreground);
+  background: var(--muted);
+}
+
+.camera-shape-btn.active {
+  color: var(--foreground);
+  border-color: var(--foreground);
+  background: var(--muted);
+}
+
+/* Camera preview */
+.camera-bubble-preview {
+  overflow: hidden;
+  border: 3px solid var(--foreground);
+  background: var(--foreground);
+  user-select: none;
+  transition: border-radius 100ms;
+}
+
+.camera-bubble-preview--dragging {
+  cursor: grabbing;
+}
+
+.camera-bubble-preview--idle {
+  cursor: grab;
+}
+
+.camera-bubble-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1);
+  pointer-events: none;
+}
+
+/* Show camera button (when hidden) */
+.camera-show-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 99999;
+  padding: 10px 20px;
+  background: var(--foreground);
+  border: 2px solid var(--foreground);
+  color: var(--background);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  transition: all 100ms;
+}
+
+.camera-show-btn:hover {
+  background: transparent;
+  color: var(--foreground);
+}
+
+.camera-show-btn-label {
+  opacity: 0.7;
+}
