@@ -1,0 +1,54 @@
+.theme-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem;
+  background: transparent;
+  border: 2px solid var(--foreground);
+  cursor: pointer;
+  transition: all 100ms;
+}
+
+.theme-toggle:hover {
+  background: var(--foreground);
+}
+
+.theme-toggle:hover .theme-icon {
+  color: var(--background);
+}
+
+.theme-toggle:focus-visible {
+  outline: 3px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+.theme-toggle-track {
+  display: none;
+}
+
+.theme-toggle-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+}
+
+.theme-icon {
+  font-size: 1rem;
+  opacity: 0.3;
+  transition: opacity 100ms;
+  line-height: 1;
+}
+
+.theme-icon.active {
+  opacity: 1;
+}
+
+.theme-icon.sun {
+  color: var(--foreground);
+}
+
+.theme-icon.moon {
+  color: var(--foreground);
+}

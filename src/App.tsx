@@ -7,7 +7,9 @@ import { CameraBubble } from './components/Recorder/CameraBubble';
 import { useRecorder } from './components/Recorder/useRecorder';
 import { ScreenRecorder } from './components/ScreenRecorder';
 import { ScreenMonitor } from './components/ScreenMonitor';
+import { ThemeToggle } from './components/ThemeToggle';
 import { useProjectStore } from './stores/projectStore';
+import { useThemeStore } from './stores/themeStore';
 import { usePageStore } from './stores/pageStore';
 import { SlidePlayer } from './components/Slides';
 import { useSlideStore } from './stores/slideStore';
@@ -42,6 +44,12 @@ theme: default
 function App() {
   const whiteboardRef = useRef<WhiteboardAPI>(null);
   const isDirty = useProjectStore((state) => state.isDirty);
+  const theme = useThemeStore((state) => state.theme);
+
+  // Initialize theme on mount
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   // Slide mode state
   const [isSlideMode, setIsSlideMode] = useState(false);
@@ -238,6 +246,7 @@ function App() {
           >
             📷 螢幕監控
           </button>
+          <ThemeToggle />
         </div>
         <div className="app-status">
           <span className="page-indicator">

@@ -1,3 +1,11 @@
+/* ============================================
+   ShotBoard - Minimalist Monochrome Theme
+   ============================================ */
+
+/* Import theme system */
+@import './styles/theme.css';
+
+/* Excalidraw fonts (keep for whiteboard) */
 @font-face {
   font-family: "Virgil";
   src: url("https://unpkg.com/@excalidraw/excalidraw@0.17.0/dist/excalidraw-assets/Virgil.woff2") format("woff2");
@@ -10,11 +18,9 @@
   font-display: swap;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ============================================
+   App Layout
+   ============================================ */
 
 html, body, #root {
   width: 100%;
@@ -27,82 +33,113 @@ html, body, #root {
   height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: #0f0f23;
-  color: #ffffff;
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 100ms, color 100ms;
 }
 
+/* ============================================
+   Header
+   ============================================ */
+
 .app-header {
-  height: 48px;
-  padding: 0 16px;
+  height: 56px;
+  padding: 0 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background-color: #1a1a2e;
-  border-bottom: 1px solid #2a2a4e;
+  background-color: var(--background);
+  border-bottom: 2px solid var(--foreground);
   flex-shrink: 0;
 }
 
 .app-title {
-  font-size: 18px;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
   font-weight: 600;
-  color: #e0e0e0;
+  letter-spacing: -0.025em;
+  color: var(--foreground);
 }
 
 .app-header-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .header-btn {
-  padding: 6px 14px;
-  border: none;
-  border-radius: 6px;
-  font-size: 13px;
+  padding: 8px 16px;
+  border: 2px solid var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  transition: all 0.15s;
-  background: #2a2a4e;
-  color: #e0e0e0;
+  transition: all 100ms;
+  background: transparent;
+  color: var(--foreground);
 }
 
 .header-btn:hover {
-  background: #3a3a5e;
+  background: var(--foreground);
+  color: var(--background);
 }
 
-.header-btn--slides {
-  background: #5c6bc0;
-  color: #fff;
+.header-btn:focus-visible {
+  outline: 3px solid var(--foreground);
+  outline-offset: 3px;
 }
 
-.header-btn--slides:hover {
-  background: #7986cb;
+/* Remove colored variations - all buttons now monochrome */
+.header-btn--slides,
+.header-btn--screen-record,
+.header-btn--screen-monitor {
+  background: transparent;
+  color: var(--foreground);
+  border-color: var(--foreground);
 }
+
+.header-btn--slides:hover,
+.header-btn--screen-record:hover,
+.header-btn--screen-monitor:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* ============================================
+   App Status
+   ============================================ */
 
 .app-status {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .page-indicator {
-  font-size: 13px;
-  color: #888;
-  padding: 4px 8px;
-  background: #252535;
-  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  color: var(--muted-foreground);
+  padding: 4px 12px;
+  border: 1px solid var(--border-light);
 }
 
 .dirty-indicator {
   width: 8px;
   height: 8px;
-  border-radius: 50%;
-  background-color: #ff6b6b;
+  background-color: var(--foreground);
 }
 
 .dirty-indicator.saved {
-  background-color: #51cf66;
+  background-color: var(--muted-foreground);
+  opacity: 0.5;
 }
+
+/* ============================================
+   Main Content
+   ============================================ */
 
 .app-main {
   flex: 1;
@@ -123,6 +160,7 @@ html, body, #root {
   flex: 1;
   position: relative;
   overflow: hidden;
+  border: 1px solid var(--border-light);
 }
 
 .whiteboard-container {
@@ -130,7 +168,10 @@ html, body, #root {
   height: 100%;
 }
 
-/* Fix Excalidraw text input */
+/* ============================================
+   Excalidraw Overrides
+   ============================================ */
+
 .excalidraw .excalidraw-textEditorContainer {
   position: fixed !important;
   z-index: 9999 !important;
@@ -141,7 +182,7 @@ html, body, #root {
   z-index: 9999 !important;
 }
 
-/* Hide Library button (bottom-left corner) */
+/* Hide Library button */
 .excalidraw .layer-ui__wrapper__footer-left,
 .excalidraw .layer-ui__wrapper__footer-left--mobile,
 .excalidraw [class*="footer-left"],
@@ -156,61 +197,80 @@ html, body, #root {
   pointer-events: none !important;
 }
 
+/* ============================================
+   Toolbar
+   ============================================ */
+
 .toolbar {
   position: absolute;
-  top: 12px;
+  top: 16px;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   gap: 8px;
-  padding: 8px 12px;
-  background-color: rgba(26, 26, 46, 0.95);
-  border-radius: 8px;
-  border: 1px solid #2a2a4e;
+  padding: 12px 16px;
+  background-color: var(--background);
+  border: 2px solid var(--foreground);
   z-index: 100;
 }
 
 .toolbar-btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  background-color: #2a2a4e;
-  color: #e0e0e0;
-  font-size: 14px;
+  padding: 8px 20px;
+  border: 2px solid var(--foreground);
+  background-color: transparent;
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 100ms;
 }
 
 .toolbar-btn:hover {
-  background-color: #3a3a5e;
+  background-color: var(--foreground);
+  color: var(--background);
+}
+
+.toolbar-btn:focus-visible {
+  outline: 3px solid var(--foreground);
+  outline-offset: 3px;
 }
 
 .toolbar-btn.primary {
-  background-color: #5c6bc0;
+  background-color: var(--foreground);
+  color: var(--background);
 }
 
 .toolbar-btn.primary:hover {
-  background-color: #7986cb;
+  background-color: transparent;
+  color: var(--foreground);
 }
 
 .toolbar-btn.record {
-  background-color: #e53935;
+  background-color: var(--foreground);
+  color: var(--background);
 }
 
 .toolbar-btn.record:hover {
-  background-color: #ef5350;
+  background-color: transparent;
+  color: var(--foreground);
 }
 
 .toolbar-btn.record.recording {
-  animation: pulse 1.5s infinite;
+  animation: pulse-mono 1.5s infinite;
 }
 
-@keyframes pulse {
+@keyframes pulse-mono {
   0%, 100% { opacity: 1; }
   50% { opacity: 0.6; }
 }
 
-/* Slide mode container */
+/* ============================================
+   Slide Mode
+   ============================================ */
+
 .slide-mode-container {
   position: fixed;
   top: 0;
@@ -218,7 +278,7 @@ html, body, #root {
   right: 0;
   bottom: 0;
   z-index: 5000;
-  background: #000;
+  background: var(--foreground);
   cursor: default !important;
 }
 
@@ -226,7 +286,10 @@ html, body, #root {
   cursor: inherit !important;
 }
 
-/* Slide editor dialog */
+/* ============================================
+   Slide Editor Dialog
+   ============================================ */
+
 .slide-editor-overlay {
   position: fixed;
   top: 0;
@@ -234,7 +297,7 @@ html, body, #root {
   right: 0;
   bottom: 0;
   z-index: 15000;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -245,113 +308,110 @@ html, body, #root {
   width: 100%;
   max-width: 900px;
   height: 80vh;
-  background: #1a1a2e;
-  border-radius: 16px;
-  border: 1px solid #2a2a4e;
+  background: var(--background);
+  border: 2px solid var(--foreground);
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
 .slide-editor-header {
-  padding: 20px 24px;
-  border-bottom: 1px solid #2a2a4e;
+  padding: 24px 32px;
+  border-bottom: 2px solid var(--foreground);
 }
 
 .slide-editor-header h2 {
   margin: 0 0 8px 0;
-  font-size: 20px;
-  color: #fff;
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--foreground);
 }
 
 .slide-editor-hint {
   margin: 0;
-  font-size: 13px;
-  color: #888;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
 }
 
 .slide-editor-hint code {
-  background: #2a2a4e;
-  padding: 2px 6px;
-  border-radius: 4px;
-  color: #7986cb;
+  font-family: var(--font-mono);
+  background: var(--muted);
+  padding: 2px 8px;
+  border: 1px solid var(--border-light);
+  color: var(--foreground);
 }
 
 .slide-editor-textarea {
   flex: 1;
   margin: 0;
-  padding: 20px 24px;
+  padding: 24px 32px;
   border: none;
-  background: #0f0f23;
-  color: #e0e0e0;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 14px;
+  background: var(--muted);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
   line-height: 1.6;
   resize: none;
   outline: none;
 }
 
 .slide-editor-textarea::placeholder {
-  color: #555;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.slide-editor-textarea:focus {
+  background: var(--background);
 }
 
 .slide-editor-footer {
-  padding: 16px 24px;
-  border-top: 1px solid #2a2a4e;
+  padding: 20px 32px;
+  border-top: 2px solid var(--foreground);
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 
 .slide-editor-btn {
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 12px 24px;
+  border: 2px solid var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 100ms;
 }
 
 .slide-editor-btn--cancel {
-  background: #2a2a4e;
-  color: #b0b0b0;
+  background: transparent;
+  color: var(--foreground);
 }
 
 .slide-editor-btn--cancel:hover {
-  background: #3a3a5e;
-  color: #fff;
+  background: var(--muted);
 }
 
-.slide-editor-btn--import {
-  background: #3d8c40;
-  color: #fff;
-}
-
-.slide-editor-btn--import:hover {
-  background: #4caf50;
-}
-
+.slide-editor-btn--import,
 .slide-editor-btn--start {
-  background: #5c6bc0;
-  color: #fff;
+  background: var(--foreground);
+  color: var(--background);
+  border-color: var(--foreground);
 }
 
+.slide-editor-btn--import:hover,
 .slide-editor-btn--start:hover {
-  background: #7986cb;
+  background: transparent;
+  color: var(--foreground);
 }
 
-/* Screen Recorder button */
-.header-btn--screen-record {
-  background: #e53935;
-  color: #fff;
-}
+/* ============================================
+   Screen Recorder Overlay
+   ============================================ */
 
-.header-btn--screen-record:hover {
-  background: #ef5350;
-}
-
-/* Screen Recorder Overlay */
 .screen-recorder-overlay {
   position: fixed;
   top: 0;
@@ -359,7 +419,7 @@ html, body, #root {
   right: 0;
   bottom: 0;
   z-index: 15000;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -368,23 +428,35 @@ html, body, #root {
 
 .screen-recorder-close-btn {
   position: absolute;
-  top: 20px;
-  right: 20px;
-  width: 40px;
-  height: 40px;
+  top: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 20px;
-  color: #888;
-  background: #2a2a4e;
-  border-radius: 8px;
+  font-size: 24px;
+  color: var(--background);
+  background: var(--foreground);
+  border: 2px solid var(--foreground);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 100ms;
   z-index: 15001;
 }
 
 .screen-recorder-close-btn:hover {
-  color: #fff;
-  background: #e53935;
+  background: transparent;
+  color: var(--foreground);
+  border-color: var(--foreground);
+}
+
+[data-theme="dark"] .screen-recorder-close-btn {
+  color: var(--foreground);
+  background: transparent;
+  border-color: var(--foreground);
+}
+
+[data-theme="dark"] .screen-recorder-close-btn:hover {
+  background: var(--foreground);
+  color: var(--background);
 }
